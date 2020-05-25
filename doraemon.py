@@ -1,13 +1,21 @@
 import discord
 import os
-import requests
+import json
 import random
 import pyjokes
+import prismapy
 from discord.ext import commands
-from discord.utils import find
 
-client = discord.Client()
-client = commands.Bot(command_prefix='-')
+
+def get_prefix(client, message):
+    with open('prefixes.json', 'r') as file:
+        prefixes = json.load(file)
+
+    return prefixes[str(message.guild.id)]
+
+
+client = commands.Bot(command_prefix=get_prefix)
+analytics = prismapy.Prismalytics("Key", client)
 client.remove_command('help')
 
 
@@ -25,16 +33,44 @@ async def on_ready():
 
 @client.event
 async def on_guild_join(guild):
-    general = find(lambda x: x.name == 'general', guild.text_channels)
-    if general and general.permissions_for(guild.me).send_messages:
-        embed = discord.Embed(
-            title="About",
-            description="""Hello, I'm **Doraemon**,
-I am a moderator bot. My command prefix is `-`. You can find all my commands by typing `-help` and know more about me by typing `-about`.
-You must have the required permissions to use a certain command. I have some additional features which can be used by anyone.
-Type `-perms` to know the permissions required to use a certain command.
-""")
-        await general.send(embed=embed)
+    with open('prefixes.json', 'r') as file:
+        prefixes = json.load(file)
+
+    prefixes[str(guild.id)] = '-'
+
+    with open('prefixes.json', 'w') as file:
+        json.dump(prefixes, file, indent=4)
+
+
+@client.event
+async def on_guild_remove(guild):
+    with open('prefixes.json', 'r') as file:
+        prefixes = json.load(file)
+
+    prefixes.pop(str(guild.id))
+
+    with open('prefixes.json', 'w') as file:
+        json.dump(prefixes, file, indent=4)
+
+
+@client.command(aliases=['prefix'])
+@commands.has_permissions(manage_guild=True)
+async def change_prefix(ctx, prefix):
+    with open('prefixes.json', 'r') as file:
+        prefixes = json.load(file)
+
+    prefixes[str(ctx.guild.id)] = prefix
+
+    with open('prefixes.json', 'w') as file:
+        json.dump(prefixes, file, indent=4)
+    embed = discord.Embed(
+        title="Prefix",
+        description=f'Prefix changed to: `{prefix}` on {ctx.guild}')
+    await ctx.send(embed=embed)
+
+
+def is_it_me(ctx):
+    return ctx.author.id == 690922103712776202
 
 
 @client.event
@@ -44,33 +80,11 @@ async def on_command_error(ctx, error):
             title="Error",
             description="This command doesn't exist.")
         await ctx.send(embed=embed)
-
-
-@client.command()
-async def perms(ctx):
-    embed = discord.Embed(
-        title="Permissions",
-        description="""
-# Commands which require Perissions:
-
-`-clear` - Manage Message Permission
-`-kick` - Kick Members Permission
-`-ban` - Ban Members Permission
-`-unban` - Ban Members Permission
-
-# Command which can be used by anyone:
-
-`-ping`
-`-joke`
-`-8ball`
-`-help`
-`-about`
-`-github`
-`-count`
-
-* Type `-help` to the function of each command.
-""")
-    await ctx.send(embed=embed)
+    elif isinstance(error, commands.MissingPermissions):
+        embed = discord.Embed(
+            title="Error",
+            description="You don't have the permissions to use this command.")
+        await ctx.send(embed=embed)
 
 
 @client.command()
@@ -79,8 +93,8 @@ async def about(ctx):
         title="About",
         description="""Hello, I'm **Doraemon**,
 I am not a 22nd century bot, I have been built in 21st century by [**Pratish**](http://programmingwizard.tech/).
-I am a moderation bot but I have some additional features too.
-Type `-help` to see my commands.
+I am a multi functional bot. I can be used for Fun, Moderation, . I can also play music.
+Use the `help` command to know my commands and their functions.
 Please [`invite`](https://discord.com/api/oauth2/authorize?client_id=709321027775365150&permissions=32668710&scope=bot) me to your server:
 """)
     await ctx.send(embed=embed)
@@ -91,18 +105,27 @@ async def help(ctx):
     embed = discord.Embed(
         title="Doraemon's commands:",
         description="""
-`-about` - To know about the bot.
-`-ping` - Check the bot's latency.
-`-stats` - Check the bot's statistics.
-`-github` - Github Repo.
-`-kick <member> <reason>` - Kicks a member out of the server.
-`-ban <member> <reason>` - Bans a member in the server.
-`-unban <member>` - Unbans the member in the server.
-`-8ball <your question>` - Play magic 8 Ball and get the answers to all your questions.
-`-joke` - A random joke.
-`-clear <amount of messages>` - Clears the specified no. of messages.(default=5)
-`-count` - Count of messages in a channel.
-    """)
+> To use a  command type `<prefix><command>`.
+
+**General Commands**
+
+`about` - To know about the bot.
+`ping` - Check the bot's latency.
+`github` - Github Repo.
+`stats` - Check the bot's statistics.
+`8ball <your question>` - Play magic 8 Ball and get the answers to all your questions.
+`count` - Count of messages in a channel.
+`joke` - A random joke.
+`info` - General Info of a member.
+
+**Moderation Commands**
+
+`clear <amount of messages>` - Clears the specified no. of messages.(default=5)
+`kick <member> <reason>` - Kicks a member out of the server.
+`ban <member> <reason>` - Bans a member in the server.
+`unban <member>` - Unbans the member in the server.
+`prefix <new prefix>` - Changes the Prefix for a specific server.
+""")
     await ctx.send(embed=embed)
 
 
@@ -217,24 +240,41 @@ async def count(ctx, channel: discord.TextChannel = None):
 
 
 @client.command()
+async def info(ctx, member: discord.Member = None):
+    member = ctx.author if not member else member
+    roles = [role for role in member.roles]
+
+    embed = discord.Embed(color=member.color, timestamp=ctx.message.created_at)
+
+    embed.set_author(name=f"User Info - {member}")
+    embed.set_thumbnail(url=member.avatar_url)
+    embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+
+    embed.add_field(name="ID:", value=member.id)
+    embed.add_field(name="Name:", value=member.display_name)
+
+    embed.add_field(name=f"Created at:", value=member.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC"))
+    embed.add_field(name=f"Joined at:", value=member.joined_at.strftime("%a, %#d %B %Y, %I:%M %p UTC"))
+
+    embed.add_field(name=f"Roles({len(roles)})", value=" ".join([role.mention for role in roles]))
+    embed.add_field(name="Top role: ", value=member.top_role.mention)
+
+    embed.add_field(name="Bot? ", value=member.bot)
+
+    await ctx.send(embed=embed)
+
+
+@client.command()
 async def spam(ctx, *, message):
-    msg = message.split(' ')
-    number = int(msg[-1])
     counter = 0
-    while counter < number:
+    while counter < 10:
         await ctx.send(message)
         counter += 1
 
 
 @client.event
 async def on_command(ctx):
-    message = ctx.message
-    guild = message.guild
-    print(guild.region)
-    data = {'message': message.content, 'server': guild.name, 'member_count': guild.member_count,
-            'server_region': guild.region}
-    requests.post('https://prismalytics.herokuapp.com/send_data', data=data,
-                  headers={'key': 'Secret Key'})
+    analytics.send(ctx)
 
 
 for filename in os.listdir('./cogs'):
