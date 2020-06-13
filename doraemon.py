@@ -187,6 +187,7 @@ async def joke(ctx):
 @commands.has_permissions(manage_messages=True)
 async def clear(ctx, amount=5):
     await ctx.channel.purge(limit=amount, before=ctx.message)
+    await ctx.message.delete()
 
 
 @client.command(aliases=['yeet'])
