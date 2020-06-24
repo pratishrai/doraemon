@@ -17,7 +17,8 @@ def get_prefix(client, message):
 
 
 client = commands.Bot(command_prefix=get_prefix)
-analytics = prismapy.Prismalytics("Key", client, save_server=True)
+analytics = prismapy.Prismalytics(
+    "Key", client, save_server=True)
 client.remove_command('help')
 
 
@@ -30,7 +31,8 @@ async def load(ctx, extension):
 async def on_ready():
     await client.change_presence(status=discord.Status.online,
                                  activity=discord.Activity(name="You using my Gadgets", type=3))
-    print(f'{client.user.name} is running....')
+    print(f'Bot is running as "{client.user.name}"')
+    print("=========================================")
 
 
 @client.event
@@ -55,7 +57,7 @@ async def on_guild_join(guild):
     general = find(lambda x: x.name == 'general', guild.text_channels)
     if general and general.permissions_for(guild.me).send_messages:
         embed = discord.Embed(
-            title="Welcome",
+            title="Hello!",
             colour=0x2859b8,
             description="""Hello, I'm **Doraemon**, I am a multi functional bot. I can be used for Fun, Moderation and much more. My default command prefix is `-`.
 You can, however, change it. You can find all my command by typing `-help` and know more about me by typing `-about`. 
@@ -92,6 +94,12 @@ async def change_prefix(ctx, prefix):
     await ctx.send(embed=embed)
 
 
+@client.event
+async def on_member_join(member):
+    channel = member.guild.system_channel
+    await channel.send(f"Hey {member.mention}, Welcome to {member.guild}")
+
+
 def is_it_me(ctx):
     return ctx.author.id == 690922103712776202
 
@@ -121,7 +129,7 @@ async def about(ctx):
 I am not a 22nd century bot, I have been built in 21st century by [**Pratish**](http://programmingwizard.tech/).
 I am a multi functional bot. I can be used for Fun, Moderation and much more.
 Use the `help` command to know my commands and their functions.
-Please [`invite`](https://discord.com/api/oauth2/authorize?client_id=709321027775365150&permissions=268692662&scope=bot) me to your server:
+Please [`invite`](https://discord.com/api/oauth2/authorize?client_id=709321027775365150&permissions=8&scope=bot) me to your server:
 """)
     await ctx.send(embed=embed)
 
@@ -210,16 +218,16 @@ async def _8ball(ctx, *, question):
 
 
 @client.command()
-async def joke(ctx, name):
+async def joke(ctx):
     embed = discord.Embed(
         title="Joke",
         colour=0x2859b8,
-        description=f'{jokes.jokes(name)}')
+        description=f'{pyjokes.get_joke()}')
     await ctx.send(embed=embed)
 
 
 @client.command()
-@commands.check(is_it_me)
+@commands.has_permissions(manage_messages=True)
 async def clear(ctx, amount=5):
     await ctx.channel.purge(limit=amount, before=ctx.message)
     await ctx.message.delete()
@@ -288,15 +296,19 @@ async def info(ctx, member: discord.Member = None):
 
     embed.set_author(name=f"User Info - {member}")
     embed.set_thumbnail(url=member.avatar_url)
-    embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+    embed.set_footer(
+        text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
     embed.add_field(name="ID:", value=member.id)
     embed.add_field(name="Name:", value=member.display_name)
 
-    embed.add_field(name=f"Created at:", value=member.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC"))
-    embed.add_field(name=f"Joined at:", value=member.joined_at.strftime("%a, %#d %B %Y, %I:%M %p UTC"))
+    embed.add_field(name=f"Created at:", value=member.created_at.strftime(
+        "%a, %#d %B %Y, %I:%M %p UTC"))
+    embed.add_field(name=f"Joined at:", value=member.joined_at.strftime(
+        "%a, %#d %B %Y, %I:%M %p UTC"))
 
-    embed.add_field(name=f"Roles({len(roles)})", value=" ".join([role.mention for role in roles]))
+    embed.add_field(name=f"Roles({len(roles)})", value=" ".join(
+        [role.mention for role in roles]))
     embed.add_field(name="Top role: ", value=member.top_role.mention)
 
     embed.add_field(name="Bot? ", value=member.bot)

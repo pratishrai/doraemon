@@ -1,2 +1,4 @@
 # doraemon-bot
-Discord Bot
+**Discord Bot which does a lot of different things**
+
+*still under construction
