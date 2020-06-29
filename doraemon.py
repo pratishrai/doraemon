@@ -2,10 +2,9 @@ import discord
 import os
 import json
 import random
-import pyjokes
 import prismapy
 from discord.ext import commands
-import jokes
+import fun
 from discord.utils import find
 
 
@@ -17,8 +16,7 @@ def get_prefix(client, message):
 
 
 client = commands.Bot(command_prefix=get_prefix)
-analytics = prismapy.Prismalytics(
-    "Key", client, save_server=True)
+analytics = prismapy.Prismalytics("Key", client, save_server=True)
 client.remove_command('help')
 
 
@@ -140,9 +138,9 @@ async def help(ctx):
         title="Doraemon's commands:",
         colour=0x2859b8,
         description="""
-> To use a  command type `<prefix><command>`.
+> To use a  command type `<prefix><command>`. The default prefix is `-`.
 
-**General**
+**__General__**
 
 `about` - To know about the bot.
 `ping` - Check the bot's latency.
@@ -150,13 +148,12 @@ async def help(ctx):
 `stats` - Check the bot's stats.
 `count` - Count of messages in a channel.
 
+**__Fun__**
 
-**Fun**
-
-`joke` - A random joke.
+`udict <term>` - Get the definition ot the terms from Urban Dictionary.
 `8ball <your question>` - Play magic 8 Ball and get the answers to all your questions.
 
-**Moderation**
+**__Moderation__**
 
 `clear <amount of messages>` - Clears the specified no. of messages.(default=5)
 `kick <member> <reason>` - Kicks a member out of the server.
@@ -218,11 +215,18 @@ async def _8ball(ctx, *, question):
 
 
 @client.command()
-async def joke(ctx):
+async def udict(ctx, term):
+    query = fun.udict(term)
     embed = discord.Embed(
-        title="Joke",
+        title="Urban Dictionary",
         colour=0x2859b8,
-        description=f'{pyjokes.get_joke()}')
+        description=f"**[{query['term']}]({query['permalink']})**")
+    embed.add_field(name="**__Definition__**", value=f"{query['definition']}")
+    embed.add_field(name="**__Example__**", inline=False,
+                    value=f"{query['example']}")
+    embed.add_field(name="**__Author__**", inline=False,
+                    value=f"{query['author']}")
+    embed.add_field(name="**__Votes__**", value=f"{query['thumbs_up']} :thumbsup: {query['thumbs_down']} :thumbsdown:")
     await ctx.send(embed=embed)
 
 
@@ -296,19 +300,15 @@ async def info(ctx, member: discord.Member = None):
 
     embed.set_author(name=f"User Info - {member}")
     embed.set_thumbnail(url=member.avatar_url)
-    embed.set_footer(
-        text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+    embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
     embed.add_field(name="ID:", value=member.id)
     embed.add_field(name="Name:", value=member.display_name)
 
-    embed.add_field(name=f"Created at:", value=member.created_at.strftime(
-        "%a, %#d %B %Y, %I:%M %p UTC"))
-    embed.add_field(name=f"Joined at:", value=member.joined_at.strftime(
-        "%a, %#d %B %Y, %I:%M %p UTC"))
+    embed.add_field(name=f"Created at:", value=member.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC"))
+    embed.add_field(name=f"Joined at:", value=member.joined_at.strftime("%a, %#d %B %Y, %I:%M %p UTC"))
 
-    embed.add_field(name=f"Roles({len(roles)})", value=" ".join(
-        [role.mention for role in roles]))
+    embed.add_field(name=f"Roles({len(roles)})", value=" ".join([role.mention for role in roles]))
     embed.add_field(name="Top role: ", value=member.top_role.mention)
 
     embed.add_field(name="Bot? ", value=member.bot)
@@ -325,4 +325,4 @@ for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
         client.load_extension(f'cogs.{filename[:-3]}')
 
-client.run('Token')
+client.run('Bot Token')

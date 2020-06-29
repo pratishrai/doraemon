@@ -22,19 +22,17 @@ class Stats(commands.Cog, name="Stats"):
         total_ram = (psutil.virtual_memory().total >> 30) + 1
         embed = discord.Embed(
             title="Bot Stats",
-            description="Running on a PC with {}GB RAM".format(
+            colour=0x2859b8,
+            description="Running on a server with {}GB RAM".format(
                 total_ram))
         embed.add_field(name="**__General Info__**", inline=False, value="\u200b")
-        embed.add_field(
-            name="Owner",
-            value=f"{app_info.owner.name}#{app_info.owner.discriminator}")
+        embed.add_field(name="Owner", value=f"{app_info.owner.name}#{app_info.owner.discriminator}")
         embed.add_field(name="Latency", value=f"{self.client.latency * 1000:.03f} ms")
         embed.add_field(name="Guild Count", value=f"{len(self.client.guilds):,}")
         embed.add_field(name="User Count", value=f"{len(self.client.users):,}")
         embed.add_field(name="**__Technical Info__**", inline=False, value="\u200b")
         embed.add_field(name="System CPU Usage", value=f"{psutil.cpu_percent():.02f}%")
-        embed.add_field(name="System RAM Usage",
-                        value=f"{psutil.virtual_memory().used / 1048576:.02f} MB")
+        embed.add_field(name="System RAM Usage", value=f"{psutil.virtual_memory().used / 1048576:.02f} MB")
         embed.add_field(name="System Uptime",
                         value=str(timedelta(seconds=int(time.time() - psutil.boot_time()))))
         embed.add_field(name="Bot CPU Usage", value=f"{process.cpu_percent():.02f}%")
