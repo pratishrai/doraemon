@@ -231,6 +231,16 @@ async def udict(ctx, term):
 
 
 @client.command()
+async def lmgtfy(ctx, *, question):
+	ques = question.replace(" ", "+")
+	link = f"https://lmgtfy.com/?q={ques}"
+	embed = discord.Embed(
+		colour=0x2859b8,
+		description=f"{link}")
+	await ctx.send(embed=embed)
+
+
+@client.command()
 @commands.has_permissions(manage_messages=True)
 async def clear(ctx, amount=5):
     await ctx.channel.purge(limit=amount, before=ctx.message)
@@ -281,9 +291,8 @@ async def unban(ctx, *, member):
 @client.command()
 async def count(ctx, channel: discord.TextChannel = None):
     channel = channel or ctx.channel
-    count = 0
-    async for _ in channel.history(limit=None):
-        count += 1
+    messages = await channel.history(limit=None).flatten()
+    count = len(messages)
     embed = discord.Embed(
         title="Total Messages",
         colour=0x2859b8,
