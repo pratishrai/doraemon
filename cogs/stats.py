@@ -23,7 +23,7 @@ class Stats(commands.Cog, name="Stats"):
         embed = discord.Embed(
             title="Bot Stats",
             colour=0x2859b8,
-            description="Running on a server with {}GB RAM".format(
+            description="Running on a Server with {}GB RAM".format(
                 total_ram))
         embed.add_field(name="**__General Info__**", inline=False, value="\u200b")
         embed.add_field(name="Owner", value=f"{app_info.owner.name}#{app_info.owner.discriminator}")

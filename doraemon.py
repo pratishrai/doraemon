@@ -1,14 +1,20 @@
 import discord
 import os
-import json
-import random
+import asyncio
 import prismapy
 from discord.ext import commands
-import fun
+import logging
+#import database
 from discord.utils import find
 
+'''
+logging.basicConfig(level=logging.DEBUG)
+loop = asyncio.get_event_loop()
+loop.create_task(database.prepare_tables())
+'''
 
-client = commands.Bot(command_prefix="-")
+
+client = commands.Bot(command_prefix="?")
 analytics = prismapy.Prismalytics("Key", client, save_server=True)
 client.remove_command('help')
 
@@ -28,16 +34,20 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    if message.author == client.user:
+        return
     ctx = await client.get_context(message)
+
     if ctx.valid:
         f = open("logs.txt", "a", newline="")
-        f.write(f'{message.guild} : {message.author} : {message.content} : {message.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC")}\n')
+        f.write(f'{message.guild}[{message.channel}] : {message.author} : {message.content} : {message.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC")}\n')
         f.close()
     await client.process_commands(message)
 
 
 @client.event
 async def on_guild_join(guild):
+    # await database.make_guild_profile(client.get_all_members(), client.user.id)
     general = find(lambda x: x.name == 'general', guild.text_channels)
     if general and general.permissions_for(guild.me).send_messages:
         embed = discord.Embed(
@@ -51,7 +61,10 @@ You can find all my command by typing `-help` and know more about me by typing `
 @client.event
 async def on_member_join(member):
     channel = member.guild.system_channel
-    await channel.send(f"Hey {member.mention}, Welcome to {member.guild}")
+    if member.guild.id == 699037304836063292:
+        print(f"Hey {member.mention}, Welcome to {member.guild}")
+    else:
+        await channel.send(f"Hey {member.mention}, Welcome to {member.guild}")
 
 
 def is_it_me(ctx):
@@ -146,148 +159,6 @@ async def invite(ctx):
     await ctx.send(embed=embed)
 
 
-@client.command(aliases=['8ball'])
-async def _8ball(ctx, *, question):
-    responses = [
-        'It is certain.',
-        'As I see it, yes.',
-        'Reply hazy, try again.',
-        "Don't count on it.",
-        'It is decidedly so.',
-        'Most likely.',
-        'Ask again later.',
-        'My reply is no.',
-        'Without a doubt.',
-        'Outlook good.',
-        'Better not tell you now.',
-        'My sources say no.',
-        'Yes – definitely.',
-        'Yes.',
-        'Cannot predict now.',
-        'Outlook not so good.',
-        'You may rely on it.',
-        'Signs point to yes.',
-        'Concentrate and ask again.',
-        'Very doubtful.',
-    ]
-    embed = discord.Embed(
-        title="Magic 8 Ball",
-        colour=0x2859b8,
-        description=f'Question: {question}\nAnswer: {random.choice(responses)}')
-    await ctx.send(embed=embed)
-
-
-@client.command()
-async def udict(ctx, term):
-    query = fun.udict(term)
-    embed = discord.Embed(
-        title="Urban Dictionary",
-        colour=0x2859b8,
-        description=f"**[{query['term']}]({query['permalink']})**")
-    embed.add_field(name="**__Definition__**", value=f"{query['definition']}")
-    embed.add_field(name="**__Example__**", inline=False,
-                    value=f"{query['example']}")
-    embed.add_field(name="**__Author__**", inline=False,
-                    value=f"{query['author']}")
-    embed.add_field(name="**__Votes__**", value=f"{query['thumbs_up']} :thumbsup: {query['thumbs_down']} :thumbsdown:")
-    await ctx.send(embed=embed)
-    
-    
-@client.command()
-async def lmgtfy(ctx, *, question):
-	ques = question.replace(" ", "+")
-	link = f"https://lmgtfy.com/?q={ques}"
-	embed = discord.Embed(
-		colour=0x2859b8,
-		description=f"{link}")
-	await ctx.send(embed=embed)
-
-
-@client.command()
-@commands.has_permissions(manage_messages=True)
-async def clear(ctx, amount=5):
-    await ctx.channel.purge(limit=amount, before=ctx.message)
-    await ctx.message.delete()
-
-
-@client.command(aliases=['yeet'])
-@commands.has_permissions(kick_members=True)
-async def kick(ctx, member: discord.Member, *, reason=None):
-    embed = discord.Embed(
-        title="Kicked",
-        colour=0x2859b8,
-        description=f'{member.mention} has been kicked.')
-    await member.kick(reason=reason)
-    await ctx.send(embed=embed)
-
-
-@client.command()
-@commands.has_permissions(ban_members=True)
-async def ban(ctx, member: discord.Member, *, reason=None):
-    embed = discord.Embed(
-        title="Banned",
-        colour=0x2859b8,
-        description=f'{member.mention} has been banned.')
-    await member.ban(reason=reason)
-    await ctx.send(embed=embed)
-
-
-@client.command()
-@commands.has_permissions(ban_members=True)
-async def unban(ctx, *, member):
-    banned_users = await ctx.guild.bans()
-    member_name, member_discriminator = member.split('#')
-
-    for ban_entry in banned_users:
-        user = ban_entry.user
-
-        if (user.name, user.discriminator) == (member_name, member_discriminator):
-            await ctx.guild.unban(user)
-            embed = discord.Embed(
-                title="Banned",
-                colour=0x2859b8,
-                description=f'{user.mention} has been unbanned.')
-            await ctx.send(embed=embed)
-            return
-
-
-@client.command()
-async def count(ctx, channel: discord.TextChannel = None):
-    channel = channel or ctx.channel
-    messages = await channel.history(limit=None).flatten()
-    count = len(messages)
-    embed = discord.Embed(
-        title="Total Messages",
-        colour=0x2859b8,
-        description=f"There were {count} messages in {channel.mention}")
-    await ctx.send(embed=embed)
-
-
-@client.command()
-async def info(ctx, member: discord.Member = None):
-    member = ctx.author if not member else member
-    roles = [role for role in member.roles]
-
-    embed = discord.Embed(color=member.color, timestamp=ctx.message.created_at)
-
-    embed.set_author(name=f"User Info - {member}")
-    embed.set_thumbnail(url=member.avatar_url)
-    embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
-
-    embed.add_field(name="ID:", value=member.id)
-    embed.add_field(name="Name:", value=member.display_name)
-
-    embed.add_field(name=f"Created at:", value=member.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC"))
-    embed.add_field(name=f"Joined at:", value=member.joined_at.strftime("%a, %#d %B %Y, %I:%M %p UTC"))
-
-    embed.add_field(name=f"Roles({len(roles)})", value=" ".join([role.mention for role in roles]))
-    embed.add_field(name="Top role: ", value=member.top_role.mention)
-
-    embed.add_field(name="Bot? ", value=member.bot)
-
-    await ctx.send(embed=embed)
-
-
 @client.event
 async def on_command(ctx):
     await analytics.send(ctx)
@@ -298,4 +169,3 @@ for filename in os.listdir('./cogs'):
         client.load_extension(f'cogs.{filename[:-3]}')
 
 client.run('Bot Token')
-
