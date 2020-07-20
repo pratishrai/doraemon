@@ -1,7 +1,7 @@
-# doraemon-bot
-**An all in one Discord Bot to perform several different tasks, like Moderation, Fun, (Playing Music)**
+# :robot: Doraemon
+**An all in one Discord Bot that has the commands commonly used on every server, like Moderation, Fun, Playing Music and much more.**
 
-[Invite the bot to your server](https://discord.com/api/oauth2/authorize-client_id=709321027775365150&permissions=8&scope=bot)
+[Invite the bot to your server](https://discord.com/api/oauth2/authorize?client_id=709321027775365150&permissions=8&scope=bot)
 
 **__Bot Commands__**
 
@@ -18,8 +18,7 @@
 
 `-udict <term>` - Get the definition of the terms from Urban Dictionary.  
 `-8ball <your question>` - Play magic 8 Ball and get the answers to all your questions.  
-`-lmgtfy <question>` -  Returns a [lmgtfy.com](https://lmgtfy.com/) link.  
-`-snipe` - Returns the last deleted message in a channel.  
+`-joke` - Get a random joke.  
 
 **__Moderation__**
 
@@ -27,7 +26,11 @@
 `-kick <member> <reason>` - Kicks a member out of the server.  
 `-ban <member> <reason>` - Bans a member in the server.  
 `-unban <member>` - Unbans the member in the server.  
-`-prefix <new prefix>` - Changes the Prefix for a specific server.  
 `-info` - General Info of a member.  
+
+**__Other__**
+
+`-lmgtfy <question>` -  Returns a [lmgtfy.com](https://lmgtfy.com/) link.  
+
 
 *still under construction
