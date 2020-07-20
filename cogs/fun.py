@@ -88,28 +88,6 @@ class Fun(commands.Cog, name="Fun"):
             description=f"{link}")
         await ctx.send(embed=embed)
 
-    
-
-    @commands.Cog.listener()
-    async def on_message_delete(self, message):
-        with open("deleted.json") as f:
-            messages = json.load(f)
-        messages[str(message.channel.id)] = f"{message.content} ~{message.author}"
-        with open('deleted.json', 'w') as f:
-            json.dump(messages, f, indent=4)
-        await self.client.process_commands(message)
-
-    @commands.command()
-    async def snipe(self, ctx):
-        with open('deleted.json', 'r') as file:
-            messages = json.load(file)
-
-        message =  messages[str(ctx.channel.id)]
-        embed = discord.Embed(
-            colour=0x2859b8,
-            description=f"{message}")
-        await ctx.send(embed=embed)
-
 
 def setup(client):
     client.add_cog(Fun(client))

@@ -119,7 +119,7 @@ async def help(ctx):
 
 `-udict <term>` - Get the definition ot the terms from Urban Dictionary.
 `-8ball <your question>` - Play magic 8 Ball and get the answers to all your questions.
-`-lmgtfy <question>` -  Returns a [lmgtfy.com](https://lmgtfy.com/) link.
+`-joke` - Get a random joke.
 
 **__Moderation__**
 
@@ -129,6 +129,10 @@ async def help(ctx):
 `-unban <member>` - Unbans the member in the server.
 `-count` - Count of messages in a channel.
 `-info` - General Info of a member.
+
+**__Other__**
+
+`-lmgtfy <question>` -  Returns a [lmgtfy.com](https://lmgtfy.com/) link.
 """)
     await ctx.send(embed=embed)
 
