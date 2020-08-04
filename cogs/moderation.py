@@ -7,12 +7,13 @@ class Moderation(commands.Cog, name="Moderation"):
     def __init__(self, client):
         self.client = client
 
+    
     @commands.command()
     @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, amount=5):
         await ctx.channel.purge(limit=amount, before=ctx.message)
         await ctx.message.delete()
-
+    
 
     @commands.command(aliases=['yeet'])
     @commands.has_permissions(kick_members=True)
@@ -53,11 +54,15 @@ class Moderation(commands.Cog, name="Moderation"):
                     description=f'{user.mention} has been unbanned.')
                 await ctx.send(embed=embed)
                 return
-
+        embed = discord.Embed(
+            title="None",
+            colour=0x2859b8,
+            description=f'No such user was found banned.')
+        await ctx.send(embed=embed)
 
     @commands.command()
     async def count(self, ctx, channel: discord.TextChannel = None):
-        channel = channel or ctx.channel
+        channel = ctx.channel
         messages = await channel.history(limit=None).flatten()
         count = len(messages)
         embed = discord.Embed(

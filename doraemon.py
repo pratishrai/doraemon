@@ -3,6 +3,7 @@ import os
 import asyncio
 import prismapy
 from discord.ext import commands
+from discord.utils import get
 import logging
 #import database
 from discord.utils import find
@@ -14,7 +15,7 @@ loop.create_task(database.prepare_tables())
 '''
 
 
-client = commands.Bot(command_prefix="?")
+client = commands.Bot(command_prefix="-")
 analytics = prismapy.Prismalytics("Key", client, save_server=True)
 client.remove_command('help')
 
@@ -36,7 +37,7 @@ async def on_ready():
 async def on_message(message):
     if message.author == client.user:
         return
-    ctx = await client.get_context(message)
+    # ctx = await client.get_context(message)
     await client.process_commands(message)
 
 
@@ -69,17 +70,9 @@ def is_it_me(ctx):
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
-        embed = discord.Embed(
-            title="Error",
-            colour=0x2859b8,
-            description="Sorry, This command doesn't exist.")
-        await ctx.send(embed=embed)
+        pass
     elif isinstance(error, commands.MissingPermissions):
-        embed = discord.Embed(
-            title="Error",
-            colour=0x2859b8,
-            description="Sorry, You don't have the permissions to use this command.")
-        await ctx.send(embed=embed)
+        pass
 
 
 @client.command()
@@ -89,7 +82,7 @@ async def about(ctx):
         colour=0x2859b8,
         description="""Hello, I'm **Doraemon**,
 I am not a 22nd century bot, I have been built in 21st century by [**Pratish**](http://programmingwizard.tech/).
-I am a multi functional bot. I can be used for Fun, Moderation and much more.
+I am a multi purpose bot. I can be used for Fun, Moderation and much more.
 Use the `-help` command to know my commands and their functions.
 """)
     await ctx.send(embed=embed)
@@ -114,7 +107,7 @@ async def help(ctx):
 
 `-udict <term>` - Get the definition ot the terms from Urban Dictionary.
 `-8ball <your question>` - Play magic 8 Ball and get the answers to all your questions.
-`-joke` - Get a random joke.
+`-meme <subreddit>` - Get a random meme from the given subreddit. Leave it empty to get a meme from the default subreddit.
 
 **__Moderation__**
 
@@ -126,8 +119,8 @@ async def help(ctx):
 `-info` - General Info of a member.
 
 **__Other__**
-
 `-lmgtfy <question>` -  Returns a [lmgtfy.com](https://lmgtfy.com/) link.
+`-gif <query>` - Get a random GIF from tanor on the specified query.
 """)
     await ctx.send(embed=embed)
 
@@ -146,7 +139,7 @@ async def github(ctx):
     embed = discord.Embed(
         title="GitHub Repo",
         colour=0x2859b8,
-        description="https://github.com/programming-wizard/doraemon")
+        description="https://github.com/pratishrai/doraemon")
     await ctx.send(embed=embed)
 
 

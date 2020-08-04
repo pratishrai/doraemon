@@ -3,6 +3,10 @@ from discord.ext import commands
 import requests
 import json
 import random
+import sys
+sys.path.insert(1, '/pyfiles')
+from pyfiles import reddit
+from discord.utils import get
 
 
 class Fun(commands.Cog, name="Fun"):
@@ -15,7 +19,7 @@ class Fun(commands.Cog, name="Fun"):
         url = 'https://icanhazdadjoke.com/'
         response1 = requests.get(url, headers= {'Accept': 'application/json'}).json()
         response2 =requests.get("https://sv443.net/jokeapi/v2/joke/Miscellaneous,Dark?type=single").json()
-        responses = [response1, response2]
+        responses = [response1["joke"], response2["joke"]]
         joke = random.choice(responses)
         embed = discord.Embed(
             title="Joke",
@@ -58,7 +62,7 @@ class Fun(commands.Cog, name="Fun"):
     @commands.command()
     async def udict(self, ctx, term):
         udict_def = requests.get(f'https://api.urbandictionary.com/v0/define?term={term}').json()
-        choice = random.choice(range(len(udict_def.json()["list"])))
+        choice = random.choice(range(len(udict_def["list"])))
         term = udict_def["list"][choice]["word"]
         definition = udict_def["list"][choice]["definition"]
         author = udict_def["list"][choice]["author"]
@@ -77,17 +81,19 @@ class Fun(commands.Cog, name="Fun"):
                         value=f"{author}")
         embed.add_field(name="**__Votes__**", value=f"{thumbs_up} :thumbsup: {thumbs_down} :thumbsdown:")
         await ctx.send(embed=embed)
-        
-        
-    @commands.command()
-    async def lmgtfy(self, ctx, *, question):
-        ques = question.replace(" ", "+")
-        link = f"https://lmgtfy.com/?q={ques}"
-        embed = discord.Embed(
-            colour=0x2859b8,
-            description=f"{link}")
-        await ctx.send(embed=embed)
 
+    @commands.command()
+    async def meme(self, ctx, subreddit='dankmemes'):
+        memes = reddit.meme(subreddit)
+        
+        embed = discord.Embed(
+            title=f"{memes['title']}",
+            colour=0x2859b8,
+        )
+        embed.set_image(url=f"{memes['url']}"),
+        await ctx.send(embed=embed)
+        
+        # await ctx.send(memes)
 
 def setup(client):
     client.add_cog(Fun(client))
