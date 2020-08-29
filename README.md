@@ -33,4 +33,3 @@
 `-gif <query>` - Get a random GIF from tanor on the specified query.  
 
 
-*still under construction

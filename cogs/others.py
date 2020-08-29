@@ -21,7 +21,7 @@ class Others(commands.Cog, name="Others"):
 
     @commands.command()
     async def gif(self, ctx, *, query):
-        gif_object = requests.get(f"https://api.tenor.com/v1/search?q={query}&key=9NHL3US0DWU0&limit=50").json()
+        gif_object = requests.get(f"https://api.tenor.com/v1/search?q={query}&key=<API Key>&limit=50").json()
         choice = random.choice(range(len(gif_object["results"])))
         url = gif_object['results'][choice]['url']
         

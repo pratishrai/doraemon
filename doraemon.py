@@ -2,6 +2,8 @@ import discord
 import os
 import asyncio
 import prismapy
+import praw
+import random
 from discord.ext import commands
 from discord.utils import get
 import logging
@@ -15,8 +17,8 @@ loop.create_task(database.prepare_tables())
 '''
 
 
-client = commands.Bot(command_prefix="-")
-analytics = prismapy.Prismalytics("Key", client, save_server=True)
+client = commands.Bot(command_prefix="?")
+analytics = prismapy.Prismalytics("2oZ3tPpluuZ3V0DtSqcEjQ", client, save_server=True)
 client.remove_command('help')
 
 
@@ -107,7 +109,7 @@ async def help(ctx):
 
 `-udict <term>` - Get the definition ot the terms from Urban Dictionary.
 `-8ball <your question>` - Play magic 8 Ball and get the answers to all your questions.
-`-meme <subreddit>` - Get a random meme from the given subreddit. Leave it empty to get a meme from the default subreddit.
+`-meme` - Get a random meme from reddit.
 
 **__Moderation__**
 

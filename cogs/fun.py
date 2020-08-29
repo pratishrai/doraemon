@@ -2,11 +2,14 @@ import discord
 from discord.ext import commands
 import requests
 import json
+import praw
 import random
-import sys
-sys.path.insert(1, '/pyfiles')
-from pyfiles import reddit
 from discord.utils import get
+
+
+reddit = praw.Reddit(client_id="Client ID",
+                     client_secret="CLient Secret",
+                     user_agent="User Agent",)
 
 
 class Fun(commands.Cog, name="Fun"):
@@ -83,17 +86,24 @@ class Fun(commands.Cog, name="Fun"):
         await ctx.send(embed=embed)
 
     @commands.command()
-    async def meme(self, ctx, subreddit='dankmemes'):
-        memes = reddit.meme(subreddit)
-        
+    async def meme(self, ctx):
+        sub = random.choice(['memes', 'dankmemes'])
+        subreddit = reddit.subreddit(f"{sub}")
+        memes = []
+        for submission in subreddit.hot(limit=50):
+            if not submission.stickied:
+                memes.append(submission)
+
+        choice = random.choice(range(len(memes)))
+        title = memes[choice].title
+        url = memes[choice].url      
+        permalink = memes[choice].permalink                
         embed = discord.Embed(
-            title=f"{memes['title']}",
             colour=0x2859b8,
-        )
-        embed.set_image(url=f"{memes['url']}"),
+            description=f"**[{title}](https://www.reddit.com{permalink})**")
+        embed.set_image(url=f"{url}")    
         await ctx.send(embed=embed)
         
-        # await ctx.send(memes)
 
 def setup(client):
     client.add_cog(Fun(client))
