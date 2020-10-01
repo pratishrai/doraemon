@@ -8,6 +8,7 @@ from discord.ext import commands
 from discord.utils import get
 import logging
 from discord.utils import find
+import db
 
 
 client = commands.Bot(command_prefix="?")
@@ -37,14 +38,27 @@ async def on_message(message):
 
 @client.event
 async def on_guild_join(guild):
-    general = find(lambda x: x.name == 'general', guild.text_channels)
-    if general and general.permissions_for(guild.me).send_messages:
-        embed = discord.Embed(
-            title="Hello!",
-            colour=0x2859b8,
-            description="""Hello, I'm **Doraemon**. I am a bot made by **Pratish**. I can be used for Fun, Moderation and much more. My command prefix is `-`.
+    profile = {
+        "guild_id": guild.id,
+        "guild_name": guild.name,
+        "prefix": '-',
+        "welcome_channel": guild.system_channel,
+        "welcome_message": "Hey {user.mention} welcome to {guild.name}",
+    }
+
+    db.add_guild(profile)
+   chennel = guild.system_channel
+    embed = discord.Embed(
+        title="Hello!",
+        colour=0x2859b8,
+        description="""Hello, I'm **Doraemon**. I am a bot made by **Pratish**. I can be used for Fun, Moderation and much more. My command prefix is `-`.
 You can find all my command by typing `-help` and know more about me by typing `-about`. """)
-        await general.send(embed=embed)
+    await general.send(embed=embed)
+
+
+@client.event
+async def on_guild_remove(guild):
+    db.remove_guild(guild.id)
 
 
 @client.event
