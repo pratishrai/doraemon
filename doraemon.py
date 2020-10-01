@@ -7,14 +7,7 @@ import random
 from discord.ext import commands
 from discord.utils import get
 import logging
-#import database
 from discord.utils import find
-
-'''
-logging.basicConfig(level=logging.DEBUG)
-loop = asyncio.get_event_loop()
-loop.create_task(database.prepare_tables())
-'''
 
 
 client = commands.Bot(command_prefix="?")
@@ -39,13 +32,11 @@ async def on_ready():
 async def on_message(message):
     if message.author == client.user:
         return
-    # ctx = await client.get_context(message)
     await client.process_commands(message)
 
 
 @client.event
 async def on_guild_join(guild):
-    # await database.make_guild_profile(client.get_all_members(), client.user.id)
     general = find(lambda x: x.name == 'general', guild.text_channels)
     if general and general.permissions_for(guild.me).send_messages:
         embed = discord.Embed(
