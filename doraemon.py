@@ -117,6 +117,14 @@ async def help(ctx):
 `-8ball <your question>` - Play magic 8 Ball and get the answers to all your questions.
 `-meme` - Get a random meme from reddit.
 
+**__Reactions__**
+
+`-laugh`
+`-shrug`
+`-hug <user>`
+`-cry`
+`-pat <user>`
+
 **__Moderation__**
 
 `-clear <amount of messages>` - Clears the specified no. of messages.(default=5)

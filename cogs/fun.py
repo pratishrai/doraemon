@@ -66,7 +66,6 @@ class Fun(commands.Cog, name="Fun"):
 
     @commands.command()
     async def meme(self, ctx):
-        #async with message.channel.typing():
         sub = random.choice(['memes', 'dankmemes'])
         subreddit = reddit.subreddit(f"{sub}")
         memes = []
