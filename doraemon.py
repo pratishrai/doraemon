@@ -2,12 +2,12 @@ import discord
 import os
 import asyncio
 import prismapy
-import praw
 import random
 from discord.ext import commands
 from discord.utils import get
-import logging
 from discord.utils import find
+import db
+import env_file
 
 
 client = commands.Bot(command_prefix="?")
@@ -37,14 +37,30 @@ async def on_message(message):
 
 @client.event
 async def on_guild_join(guild):
-    general = find(lambda x: x.name == 'general', guild.text_channels)
-    if general and general.permissions_for(guild.me).send_messages:
-        embed = discord.Embed(
-            title="Hello!",
-            colour=0x2859b8,
-            description="""Hello, I'm **Doraemon**. I am a bot made by **Pratish**. I can be used for Fun, Moderation and much more. My command prefix is `-`.
+    profile = {
+        "guild_id": guild.id,
+        "guild_name": guild.name,
+        "prefix": '-',
+        "welcome_channel": guild.system_channel,
+        "welcome_message": "Hey {user.mention} welcome to {guild.name}",
+        
+    }
+
+    db.add_guild(profile)
+    channel = guild.system_channel
+    embed = discord.Embed(
+        title="Hello!",
+        colour=0x2859b8,
+        description="""Hello, I'm **Doraemon**. I am an all in one bot made by **The Good Kid#1999**. I can be used for Fun, Moderation and much more. My command prefix is `-`.
 You can find all my command by typing `-help` and know more about me by typing `-about`. """)
-        await general.send(embed=embed)
+    await channel.send(embed=embed)
+
+
+
+
+@client.event
+async def on_guild_remove(guild):
+    db.remove_guild(guild.id)
 
 
 @client.event
@@ -98,7 +114,6 @@ async def help(ctx):
 
 **__Fun__**
 
-`-udict <term>` - Get the definition ot the terms from Urban Dictionary.
 `-8ball <your question>` - Play magic 8 Ball and get the answers to all your questions.
 `-meme` - Get a random meme from reddit.
 
@@ -144,6 +159,15 @@ async def invite(ctx):
     await ctx.send(embed=embed)
 
 
+
+@client.command()
+async def typing(ctx):
+    async with ctx.channel.typing():
+        await asyncio.sleep(5)
+        await ctx.send('done!')
+
+
+
 @client.event
 async def on_command(ctx):
     await analytics.send(ctx)
@@ -153,4 +177,6 @@ for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
         client.load_extension(f'cogs.{filename[:-3]}')
 
-client.run('Bot Token')
+token = env_file.get()
+
+client.run(token['BOT_TOKEN'])

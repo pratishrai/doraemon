@@ -5,11 +5,13 @@ import json
 import praw
 import random
 from discord.utils import get
+import env_file
+token = env_file.get()
 
 
-reddit = praw.Reddit(client_id="Client ID",
-                     client_secret="CLient Secret",
-                     user_agent="User Agent",)
+reddit = praw.Reddit(client_id=f"{token['CLIENT_ID']}",
+                     client_secret=f"{token['CLIENT_SECRET']}",
+                     user_agent="doraemon by /u/pr0grammingwizard",)
 
 
 class Fun(commands.Cog, name="Fun"):
@@ -63,30 +65,8 @@ class Fun(commands.Cog, name="Fun"):
 
 
     @commands.command()
-    async def udict(self, ctx, term):
-        udict_def = requests.get(f'https://api.urbandictionary.com/v0/define?term={term}').json()
-        choice = random.choice(range(len(udict_def["list"])))
-        term = udict_def["list"][choice]["word"]
-        definition = udict_def["list"][choice]["definition"]
-        author = udict_def["list"][choice]["author"]
-        example = udict_def["list"][choice]["example"]
-        thumbs_up = udict_def["list"][choice]["thumbs_up"]
-        thumbs_down = udict_def["list"][choice]["thumbs_down"]
-        permalink = udict_def["list"][choice]["permalink"]
-        embed = discord.Embed(
-            title="Urban Dictionary",
-            colour=0x2859b8,
-            description=f"**[{term}]({permalink})**")
-        embed.add_field(name="**__Definition__**", value=f"{definition}")
-        embed.add_field(name="**__Example__**", inline=False,
-                        value=f"{example}")
-        embed.add_field(name="**__Author__**", inline=False,
-                        value=f"{author}")
-        embed.add_field(name="**__Votes__**", value=f"{thumbs_up} :thumbsup: {thumbs_down} :thumbsdown:")
-        await ctx.send(embed=embed)
-
-    @commands.command()
     async def meme(self, ctx):
+        #async with message.channel.typing():
         sub = random.choice(['memes', 'dankmemes'])
         subreddit = reddit.subreddit(f"{sub}")
         memes = []
@@ -96,12 +76,12 @@ class Fun(commands.Cog, name="Fun"):
 
         choice = random.choice(range(len(memes)))
         title = memes[choice].title
-        url = memes[choice].url      
-        permalink = memes[choice].permalink                
+        url = memes[choice].url
+        permalink = memes[choice].permalink
         embed = discord.Embed(
             colour=0x2859b8,
             description=f"**[{title}](https://www.reddit.com{permalink})**")
-        embed.set_image(url=f"{url}")    
+        embed.set_image(url=f"{url}")
         await ctx.send(embed=embed)
         
 

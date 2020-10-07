@@ -4,3 +4,4 @@ prismapy==2.1.2
 psutil==5.7.0
 requests==2.23.0
 praw==7.1.0
+env-file==0.0.0

@@ -3,6 +3,7 @@ from discord.ext import commands
 import requests
 import json
 import random
+import env_file
 
 
 class Others(commands.Cog, name="Others"):
@@ -21,7 +22,8 @@ class Others(commands.Cog, name="Others"):
 
     @commands.command()
     async def gif(self, ctx, *, query):
-        gif_object = requests.get(f"https://api.tenor.com/v1/search?q={query}&key=<API Key>&limit=50").json()
+        token = env_file.get()
+        gif_object = requests.get(f"https://api.tenor.com/v1/search?q={query}&key={token['TENOR_KEY']}&limit=50").json()
         choice = random.choice(range(len(gif_object["results"])))
         url = gif_object['results'][choice]['url']
         
