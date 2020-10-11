@@ -9,7 +9,6 @@ import youtube_dl
 
 
 class Music(commands.Cog, name="Music"):
-
     def __init__(self, client):
         self.client = client
 
@@ -23,11 +22,8 @@ class Music(commands.Cog, name="Music"):
             await voice.move_to(channel)
         else:
             voice = await channel.connect()
-        embed = discord.Embed(
-            colour=0x2859b8,
-            description=f"Joined {channel}")
+        embed = discord.Embed(colour=0x2859B8, description=f"Joined {channel}")
         await ctx.send(embed=embed)
-
 
     @commands.command()
     async def leave(self, ctx):
@@ -36,11 +32,8 @@ class Music(commands.Cog, name="Music"):
 
         if voice and voice.is_connected():
             await voice.disconnect()
-            embed = discord.Embed(
-                colour=0x2859b8,
-                description=f"Left {channel}")
+            embed = discord.Embed(colour=0x2859B8, description=f"Left {channel}")
             await ctx.send(embed=embed)
-
 
 
 def setup(client):
