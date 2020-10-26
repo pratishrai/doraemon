@@ -8,7 +8,7 @@ class Moderation(commands.Cog, name="Moderation"):
 
     @commands.command()
     @commands.has_permissions(manage_messages=True)
-    async def clear(self, ctx, amount=5):
+    async def clear(self, ctx, amount=1):
         await ctx.channel.purge(limit=amount, before=ctx.message)
         await ctx.message.delete()
 
@@ -106,7 +106,7 @@ class Moderation(commands.Cog, name="Moderation"):
 
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(aliases=["sinfo"])
     async def serverinfo(self, ctx):
         async with ctx.channel.typing():
             embed = discord.Embed(color=0x2859B8, timestamp=ctx.message.created_at)

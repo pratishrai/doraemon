@@ -1,0 +1,51 @@
+import discord
+from discord.ext import commands
+import requests
+import json
+import env_file
+
+token = env_file.get()
+
+
+class Poll(commands.Cog, name="Poll"):
+    def __init__(self, client):
+        self.client = client
+
+    @commands.command(aliases=["sp"])
+    async def strawpoll(self, ctx, *, poll_data: str):
+
+        poll_data = poll_data.split("|")
+        title = poll_data[0]
+        description = poll_data[1]
+        options = poll_data[2:]
+
+        data = {
+            "poll": {
+                "title": title,
+                "description": description,
+                "answers": options,
+                "priv": True,
+                "ma": 0,
+                "mip": 0,
+                "co": 1,
+                "vpn": 0,
+                "enter_name": 0,
+                "has_deadline": True,
+                "deadline": "2020-12-31T07:00:00.000Z",
+                "only_reg": 0,
+                "has_image": 0,
+                "image": None,
+            }
+        }
+
+        poll = requests.post(
+            "https://strawpoll.com/api/poll",
+            json=data,
+            headers={"API-KEY": token["STRAWPOLL_KEY"]},
+        ).json()
+
+        await ctx.send(f"https://strawpoll.com/{poll['content_id']}")
+
+
+def setup(client):
+    client.add_cog(Poll(client))

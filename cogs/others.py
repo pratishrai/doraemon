@@ -15,8 +15,8 @@ class Others(commands.Cog, name="Others"):
         gif_object = requests.get(
             f"https://api.tenor.com/v1/search?q={query}&key={token['TENOR_KEY']}&limit=50"
         ).json()
-        choice = random.choice(range(len(gif_object["results"])))
-        url = gif_object["results"][choice]["media"][0]["tinygif"]["url"]
+        choice = random.choice(range(50))
+        url = gif_object["results"][choice]["media"][0]["gif"]["url"]
         return url
 
     @commands.command()
@@ -27,7 +27,7 @@ class Others(commands.Cog, name="Others"):
             embed = discord.Embed(colour=0x2859B8, description=f"{link}")
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(aliases=["g"])
     async def gif(self, ctx, *, query):
         async with ctx.channel.typing():
             url = self.tenor(query=query)

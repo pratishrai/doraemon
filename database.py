@@ -7,8 +7,9 @@ client = MongoClient(token["URI"])
 db = client.doraemonbot
 profiles = db.guild_profiles
 
-guild = list(db.guild_profiles.find({}))
-print(guild)
+def guilds():
+	guild = list(db.guild_profiles.find({}))
+	return guild
 
 
 def add_guild(profile):
@@ -19,9 +20,12 @@ def remove_guild(guild):
     profiles.delete_one({"guild_id": guild})
 
 
-def delete():
-    profiles.delete_one({"guild_id": 45654165198465163})
 
+def find_guild(guild):
+	guild = profiles.find_one({"guild_id": guild})
+	return guild
 
-# delete()
+# print(find_guild(876827316982))
+
 # add_guild(profile)
+# profiles.update_many({}, {"$set": {"something": "idk"}}, upsert=False, array_filters=None)

@@ -6,11 +6,11 @@ import random
 from discord.ext import commands
 from discord.utils import get
 from discord.utils import find
-# import db
+import database
 import env_file
 
 
-client = commands.Bot(command_prefix="?")
+client = commands.Bot(command_prefix="-")
 analytics = prismapy.Prismalytics("2oZ3tPpluuZ3V0DtSqcEjQ", client, save_server=True)
 client.remove_command("help")
 
@@ -34,21 +34,26 @@ async def on_ready():
 async def on_message(message):
     if message.author == client.user:
         return
+    guild = database.find_guild(message.guild.id)
+    if guild is None:
+        profile = {
+            "guild_id": message.guild.id,
+            "prefix": "-",
+            "welcome_channel": None,
+            "welcome_message": "Hey {user.mention} welcome to {guild.name}",
+            "welcome_type": "channel",
+            "subreddits": ["memes", "dankmemes"],
+            "autorole": False,
+            "on_join_role": None,
+        }
+
+        database.add_guild(profile)
+        print(f"Profile has been created for {message.guild.name}:{message.guild.id}")
     await client.process_commands(message)
 
 
 @client.event
 async def on_guild_join(guild):
-    # profile = {
-    #     "guild_id": guild.id,
-    #     "prefix": "-",
-    #     "welcome_channel": guild.system_channel,
-    #     "welcome_message": "Hey {user.mention} welcome to {guild.name}",
-    #     "welcome_type": "channel",
-    #     "subreddits": ["memes", "dankmemes"],
-    # }
-
-    # db.add_guild(profile)
     channel = guild.system_channel
     embed = discord.Embed(
         title="Hello!",
@@ -59,9 +64,9 @@ You can find all my command by typing `-help` and know more about me by typing `
     await channel.send(embed=embed)
 
 
-# @client.event
-# async def on_guild_remove(guild):
-#     db.remove_guild(guild.id)
+@client.event
+async def on_guild_remove(guild):
+    database.remove_guild(guild.id)
 
 
 @client.event
@@ -107,7 +112,6 @@ async def help(ctx):
             title="Doraemon's commands:",
             colour=0x2859B8,
             description="""
-
 **__General__**
 
 `-about` - To know about the bot.
@@ -120,6 +124,8 @@ async def help(ctx):
 
 `-8ball <your question>` - Play magic 8 Ball and get the answers to all your questions.
 `-meme` - Get a random meme from reddit.
+`-gif <query>` - Get a random GIF from tanor on the specified query.
+`-reddit <subreddit>|<query>` - Search for posts in the specified subreddit.
 
 **__Reactions__**
 
@@ -131,7 +137,7 @@ async def help(ctx):
 
 **__Moderation__**
 
-`-clear <amount of messages>` - Clears the specified no. of messages.(default=5)
+`-clear <amount of messages>` - Clears the specified no. of messages.(default=1)
 `-kick <member> <reason>` - Kicks a member out of the server.
 `-ban <member> <reason>` - Bans a member in the server.
 `-unban <member>` - Unbans the member in the server.
@@ -139,11 +145,14 @@ async def help(ctx):
 `-info` - General Info of a member.
 `-serverinfo` - General Info of the Server
 
-**__Other__**
+**__Utility__**
+
 `-lmgtfy <question>` -  Returns a [lmgtfy.com](https://lmgtfy.com/) link.
-`-gif <query>` - Get a random GIF from tanor on the specified query.
+`-poll <title>|<description>|<option 1>|<option 2>|<option n>` - Create polls on strawpolls right in discord.
+
+(`|` is used for separation)
 """,
-        )
+    )
     await ctx.send(embed=embed)
 
 
@@ -158,7 +167,7 @@ async def ping(ctx):
     await ctx.send(embed=embed)
 
 
-@client.command()
+@client.command(aliases=["gh"])
 async def github(ctx):
     async with ctx.channel.typing():
         embed = discord.Embed(
@@ -177,13 +186,6 @@ async def invite(ctx):
             description="Invite me to your server using [this link](https://discord.com/api/oauth2/authorize?client_id=709321027775365150&permissions=8&scope=bot)",
         )
     await ctx.send(embed=embed)
-
-
-@client.command()
-async def typing(ctx):
-    async with ctx.channel.typing():
-        await asyncio.sleep(5)
-        await ctx.send("done!")
 
 
 @client.event
