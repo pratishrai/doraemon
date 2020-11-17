@@ -1,4 +1,4 @@
-# :robot: Doraemon
+# :robot: Doraemon [![Discord Bots](https://top.gg/api/widget/status/709321027775365150.svg)](https://top.gg/bot/709321027775365150)
 **A multipurpose Discord Bot that has the commands commonly used on every server, like Moderation, Fun, Playing Music and much more.**
 
 [![Discord Bots](https://top.gg/api/widget/709321027775365150.svg)](https://top.gg/bot/709321027775365150)
@@ -49,11 +49,10 @@
 
 <ins>**Coming Soon**</ins>
 
-- Music
 - Web Dashboard
 
 
-<ins>**Setup**</ins>
+# Setup
 
 - Clone the repo with `git clone https://github.com/pratishrai/doraemon`
 - Install the requirements using `pip3 install -r requirements.txt`
