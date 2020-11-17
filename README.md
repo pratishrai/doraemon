@@ -1,7 +1,8 @@
 # :robot: Doraemon
 **A multipurpose Discord Bot that has the commands commonly used on every server, like Moderation, Fun, Playing Music and much more.**
 
-[![Doraemon's Widget](https://api.botlist.space/widget/709321027775365150/4 "Doraemon's Widget")](https://botlist.space/bot/709321027775365150?utm_source=bls&utm_medium=widget&utm_campaign=709321027775365150&rounded=true&shadows=true)
+[![Discord Bots](https://top.gg/api/widget/709321027775365150.svg)](https://top.gg/bot/709321027775365150)
+
 
 [Invite the bot to your server](https://discord.com/api/oauth2/authorize?client_id=709321027775365150&permissions=8&scope=bot)
 
