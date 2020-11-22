@@ -10,7 +10,7 @@ import database
 import env_file
 
 
-client = commands.Bot(command_prefix="-")
+client = commands.Bot(command_prefix="?")
 analytics = prismapy.Prismalytics("2oZ3tPpluuZ3V0DtSqcEjQ", client, save_server=True)
 client.remove_command("help")
 
@@ -35,20 +35,20 @@ async def on_message(message):
     if message.author == client.user:
         return
     guild = database.find_guild(message.guild.id)
-    if guild is None:
-        profile = {
-            "guild_id": message.guild.id,
-            "prefix": "-",
-            "welcome_channel": None,
-            "welcome_message": "Hey {user.mention} welcome to {guild.name}",
-            "welcome_type": "channel",
-            "subreddits": ["memes", "dankmemes"],
-            "autorole": False,
-            "on_join_role": None,
-        }
+    # if guild is None:
+    #     profile = {
+    #         "guild_id": message.guild.id,
+    #         "prefix": "-",
+    #         "welcome_channel": None,
+    #         "welcome_message": "Hey {user.mention} welcome to {guild.name}",
+    #         "welcome_type": "channel",
+    #         "subreddits": ["memes", "dankmemes"],
+    #         "autorole": False,
+    #         "on_join_role": None,
+    #     }
 
-        database.add_guild(profile)
-        print(f"Profile has been created for {message.guild.name}:{message.guild.id}")
+    #     database.add_guild(profile)
+    #     print(f"Profile has been created for {message.guild.name}:{message.guild.id}")
     await client.process_commands(message)
 
 
@@ -56,17 +56,28 @@ async def on_message(message):
 async def on_guild_join(guild):
     channel = guild.system_channel
     embed = discord.Embed(
-        title="Hello!",
         colour=0x2859B8,
-        description="""Hello, I'm **Doraemon**. I am an all in one bot made by **The Good Kid#1999**. I can be used for Fun, Moderation and much more. My command prefix is `-`.
-You can find all my command by typing `-help` and know more about me by typing `-about`. """,
+        description="""Hello, Thanks for adding Doraemon!
+        Doraemon is a multipurpose Discord Bot that has the commands commonly used on every server. It can also helps you do a lot of things right in discord.
+        
+        There are a lot of things you can do with Doraemon. Simply use the `-help` command to see a list of commands you can use.
+        """,
+    )
+    embed.add_field(
+        name="**__Usefull Links__**",
+        inline=False,
+        value="""
+    Consider upvoting **[Doraemon](https://top.gg/bot/709321027775365150)** on Top.gg
+    Have an issue/suggestion? Join the **[Support Server](https://discord.gg/yMkdWMg)**
+    You can find the source code on **[Doraemon's GitHub page](https://github.com/pratishrai/doraemon)**
+    """,
     )
     await channel.send(embed=embed)
 
 
-@client.event
-async def on_guild_remove(guild):
-    database.remove_guild(guild.id)
+# @client.event
+# async def on_guild_remove(guild):
+#     database.remove_guild(guild.id)
 
 
 @client.event
@@ -84,10 +95,7 @@ def is_it_me(ctx):
 
 @client.event
 async def on_command_error(ctx, error):
-    if isinstance(error, commands.CommandNotFound):
-        pass
-    elif isinstance(error, commands.MissingPermissions):
-        pass
+    print(error)
 
 
 @client.command()
@@ -105,55 +113,226 @@ Use the `-help` command to know my commands and their functions.
     await ctx.send(embed=embed)
 
 
-@client.command()
+@client.group()
+async def help(ctx):
+    if ctx.invoked_subcommand is None:
+        async with ctx.channel.typing():
+            embed = discord.Embed(
+                title="Help",
+                colour=0x2859B8,
+                description="""
+    Here's the list of commands you can use:
+    """,
+            )
+            embed.add_field(
+                name="**__General__**", value="```about\nping\ngithub\nstats\ninvite```"
+            )
+            embed.add_field(
+                name="**__Fun__**", value="```8ball\nmeme\ngif\n-joke\n-```"
+            )
+            embed.add_field(
+                name="**__Reactions__**",
+                value="```laugh\nshrug\nhug\ncry\npat\n```",
+            )
+            embed.add_field(
+                name="**__Moderation__**",
+                value="```clear\nkick\nban\nunban\ncount\ninfo\nserverinfo\n```",
+            )
+            embed.add_field(
+                name="**__Utility__**", value="```lmgtfy\npoll\nreddit\n-\n-\n-\n-```"
+            )
+        await ctx.send(embed=embed)
+
+
+@help.command()
 async def help(ctx):
     async with ctx.channel.typing():
         embed = discord.Embed(
-            title="Doraemon's commands:",
             colour=0x2859B8,
-            description="""
-**__General__**
-
-`-about` - To know about the bot.
-`-ping` - Check the bot's latency.
-`-github` - Github Repo.
-`-stats` - Check the bot's stats.
-`-invite` - Get the invite link for the bot.
-
-**__Fun__**
-
-`-8ball <your question>` - Play magic 8 Ball and get the answers to all your questions.
-`-meme` - Get a random meme from reddit.
-`-gif <query>` - Get a random GIF from tanor on the specified query.
-`-reddit <subreddit>|<query>` - Search for posts in the specified subreddit.
-
-**__Reactions__**
-
-`-laugh`
-`-shrug`
-`-hug <user>`
-`-cry`
-`-pat <user>`
-
-**__Moderation__**
-
-`-clear <amount of messages>` - Clears the specified no. of messages.(default=1)
-`-kick <member> <reason>` - Kicks a member out of the server.
-`-ban <member> <reason>` - Bans a member in the server.
-`-unban <member>` - Unbans the member in the server.
-`-count` - Count of messages in a channel.
-`-info` - General Info of a member.
-`-serverinfo` - General Info of the Server
-
-**__Utility__**
-
-`-lmgtfy <question>` -  Returns a [lmgtfy.com](https://lmgtfy.com/) link.
-`-poll <title>|<description>|<option 1>|<option 2>|<option n>` - Create polls on strawpolls right in discord.
-
-(`|` is used for separation)
-""",
-    )
+        )
+        embed.add_field(name="Command", value="-help")
+        embed.add_field(name="Alias", value="None")
+        embed.add_field(
+            name="Usage", inline=False, value="Shows the list of commands available"
+        )
+        embed.add_field(
+            name="Example",
+            inline=False,
+            value="`-help <command name>`\n`-help poll`",
+        )
     await ctx.send(embed=embed)
+
+
+@help.command()
+async def about(ctx):
+    async with ctx.channel.typing():
+        embed = discord.Embed(
+            colour=0x2859B8,
+        )
+        embed.add_field(name="Command", value="-about")
+        embed.add_field(name="Alias", value="None")
+        embed.add_field(name="Usage", inline=False, value="Know more about the bot")
+        embed.add_field(
+            name="Example",
+            inline=False,
+            value="`-about",
+        )
+    await ctx.send(embed=embed)
+
+
+@help.command()
+async def ping(ctx):
+    async with ctx.channel.typing():
+        embed = discord.Embed(
+            colour=0x2859B8,
+        )
+        embed.add_field(name="Command", value="-ping")
+        embed.add_field(name="Alias", value="None")
+        embed.add_field(name="Usage", inline=False, value="Check bot's latency")
+        embed.add_field(
+            name="Example",
+            inline=False,
+            value="`-ping`",
+        )
+    await ctx.send(embed=embed)
+
+
+@help.command()
+async def github(ctx):
+    async with ctx.channel.typing():
+        embed = discord.Embed(
+            colour=0x2859B8,
+        )
+        embed.add_field(name="Command", value="-github")
+        embed.add_field(name="Alias", value="`-gh`")
+        embed.add_field(name="Usage", inline=False, value="Bot's Github Repo")
+        embed.add_field(
+            name="Example",
+            inline=False,
+            value="`-github`\n`-gh`",
+        )
+    await ctx.send(embed=embed)
+
+
+@help.command()
+async def stats(ctx):
+    async with ctx.channel.typing():
+        embed = discord.Embed(
+            colour=0x2859B8,
+        )
+        embed.add_field(name="Command", value="-stats")
+        embed.add_field(name="Alias", value="None")
+        embed.add_field(name="Usage", inline=False, value="Check the bot's statistics")
+        embed.add_field(
+            name="Example",
+            inline=False,
+            value="`-stats`",
+        )
+    await ctx.send(embed=embed)
+
+
+@help.command()
+async def invite(ctx):
+    async with ctx.channel.typing():
+        embed = discord.Embed(
+            colour=0x2859B8,
+        )
+        embed.add_field(name="Command", value="-invite")
+        embed.add_field(name="Alias", value="None")
+        embed.add_field(
+            name="Usage", inline=False, value="Get the invite link for the bot"
+        )
+        embed.add_field(
+            name="Example",
+            inline=False,
+            value="`-invite`",
+        )
+    await ctx.send(embed=embed)
+
+
+# @help.command()
+# async def help(ctx):
+#     async with ctx.channel.typing():
+#         embed = discord.Embed(
+#             colour=0x2859B8,
+#         )
+#         embed.add_field(name="Command", value="")
+#         embed.add_field(name="Alias", value="")
+#         embed.add_field(name="Usage", inline=False, value="")
+#         embed.add_field(
+#             name="Example",
+#             inline=False,
+#             value="",
+#         )
+#     await ctx.send(embed=embed)
+
+
+# @help.command()
+# async def help(ctx):
+#     async with ctx.channel.typing():
+#         embed = discord.Embed(
+#             colour=0x2859B8,
+#         )
+#         embed.add_field(name="Command", value="")
+#         embed.add_field(name="Alias", value="")
+#         embed.add_field(name="Usage", inline=False, value="")
+#         embed.add_field(
+#             name="Example",
+#             inline=False,
+#             value="",
+#         )
+#     await ctx.send(embed=embed)
+
+
+# @help.command()
+# async def help(ctx):
+#     async with ctx.channel.typing():
+#         embed = discord.Embed(
+#             colour=0x2859B8,
+#         )
+#         embed.add_field(name="Command", value="")
+#         embed.add_field(name="Alias", value="")
+#         embed.add_field(name="Usage", inline=False, value="")
+#         embed.add_field(
+#             name="Example",
+#             inline=False,
+#             value="",
+#         )
+#     await ctx.send(embed=embed)
+
+
+# @help.command()
+# async def help(ctx):
+#     async with ctx.channel.typing():
+#         embed = discord.Embed(
+#             colour=0x2859B8,
+#         )
+#         embed.add_field(name="Command", value="")
+#         embed.add_field(name="Alias", value="")
+#         embed.add_field(name="Usage", inline=False, value="")
+#         embed.add_field(
+#             name="Example",
+#             inline=False,
+#             value="",
+#         )
+#     await ctx.send(embed=embed)
+
+
+# @help.command()
+# async def help(ctx):
+#     async with ctx.channel.typing():
+#         embed = discord.Embed(
+#             colour=0x2859B8,
+#         )
+#         embed.add_field(name="Command", value="")
+#         embed.add_field(name="Alias", value="")
+#         embed.add_field(name="Usage", inline=False, value="")
+#         embed.add_field(
+#             name="Example",
+#             inline=False,
+#             value="",
+#         )
+#     await ctx.send(embed=embed)
 
 
 @client.command()
@@ -199,4 +378,4 @@ for filename in os.listdir("./cogs"):
 
 token = env_file.get()
 
-client.run(token["BOT_TOKEN"])
+client.run(token["DEV_BOT_TOKEN"])

@@ -1,12 +1,13 @@
-# :robot: Doraemon [![Discord Bots](https://top.gg/api/widget/status/709321027775365150.svg)](https://top.gg/bot/709321027775365150)
-**A multipurpose Discord Bot that has the commands commonly used on every server, like Moderation, Fun, Playing Music and much more.**
+[![Discord Bots](https://top.gg/api/widget/status/709321027775365150.svg)](https://top.gg/bot/709321027775365150)
+[![invite bot](https://img.shields.io/static/v1?style=flat&logo=discord&logoColor=FFF&label=&message=invite%20me&color=7289DA)](https://top.gg/bot/709321027775365150)
+
+# Doraemon
+**A multipurpose Discord Bot that has the commands commonly used on every server. Helps you do a lot of things right in discord.**
 
 [![Discord Bots](https://top.gg/api/widget/709321027775365150.svg)](https://top.gg/bot/709321027775365150)
 
 
-[Invite the bot to your server](https://discord.com/api/oauth2/authorize?client_id=709321027775365150&permissions=8&scope=bot)
-
-<ins>**Bot Commands**</ins>
+# Bot Commands
 
 **__General__**
 
@@ -21,7 +22,6 @@
 `-8ball <your question>` - Play magic 8 Ball and get the answers to all your questions.  
 `-meme` - Get a random meme from reddit.  
 `-gif <query>` - Get a random GIF from tanor on the specified query.  
-`-reddit <subreddit>|<query>` - Search for posts in the specified subreddit.  
 
 **__Reactions__**
 
@@ -45,11 +45,13 @@
 
 `-lmgtfy <question>` -  Returns a [lmgtfy.com](https://lmgtfy.com/) link.  
 `-poll <title>|<description>|<option 1>|<option 2>|<option n>` - Create polls on strawpolls right in discord.  
+`-reddit <subreddit>|<query>` - Search for posts in the specified subreddit.  
 
 
-<ins>**Coming Soon**</ins>
+# TO-DO
 
 - Web Dashboard
+- More commands
 
 
 # Setup
@@ -58,11 +60,12 @@
 - Install the requirements using `pip3 install -r requirements.txt`
 - Create a `.env` file with the following:
     > `BOT_TOKEN=<your bot token>`  
-     `URI=<your mongodb URI>`  
-     `TENOR_API=<your tenor API>`  
-     `CLIENT_ID=<your reddit application id>`  
-     `CLIENT_SECRET=<your reddit application secret>`  
-     `STRAWPOLL_KEY=<your strawpoll api key>`
+     `URI = <your mongodb URI>`  
+     `TENOR_API = <your tenor API>`  
+     `APP_ID = <your reddit application id>`  
+     `APP_SECRET = <your reddit application secret>`  
+     `STRAWPOLL_KEY = <your strawpoll api key>`
+     `DBL_TOKEN = <Top.gg Token>`
 - You can now run the bot using `python3 doraemon.py`
 
 

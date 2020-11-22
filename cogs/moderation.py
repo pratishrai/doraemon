@@ -6,7 +6,7 @@ class Moderation(commands.Cog, name="Moderation"):
     def __init__(self, client):
         self.client = client
 
-    @commands.command()
+    @commands.command(aliases=["c"])
     @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, amount=1):
         await ctx.channel.purge(limit=amount, before=ctx.message)
@@ -55,19 +55,6 @@ class Moderation(commands.Cog, name="Moderation"):
         embed = discord.Embed(
             title="None", colour=0x2859B8, description=f"No such user was found banned."
         )
-        await ctx.send(embed=embed)
-
-    @commands.command()
-    async def count(self, ctx, channel: discord.TextChannel = None):
-        async with ctx.channel.typing():
-            channel = ctx.channel
-            messages = await channel.history(limit=None).flatten()
-            count = len(messages)
-            embed = discord.Embed(
-                title="Total Messages",
-                colour=0x2859B8,
-                description=f"There were {count} messages in {channel.mention}",
-            )
         await ctx.send(embed=embed)
 
     @commands.command()

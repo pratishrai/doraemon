@@ -12,8 +12,8 @@ token = env_file.get()
 
 
 reddit = praw.Reddit(
-    client_id=f"{token['CLIENT_ID']}",
-    client_secret=f"{token['CLIENT_SECRET']}",
+    client_id=f"{token['APP_ID']}",
+    client_secret=f"{token['APP_SECRET']}",
     user_agent="doraemon by /u/pr0grammingwizard",
 )
 
