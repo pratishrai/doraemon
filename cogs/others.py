@@ -23,38 +23,6 @@ class Others(commands.Cog, name="Others"):
             embed = discord.Embed(title="Joke", colour=0x2859B8, description=f"{joke}")
         await ctx.send(embed=embed)
 
-    @commands.command(aliases=["8ball"])
-    async def _8ball(self, ctx, *, question):
-        async with ctx.channel.typing():
-            responses = [
-                "It is certain.",
-                "As I see it, yes.",
-                "Reply hazy, try again.",
-                "Don't count on it.",
-                "It is decidedly so.",
-                "Most likely.",
-                "Ask again later.",
-                "My reply is no.",
-                "Without a doubt.",
-                "Outlook good.",
-                "Better not tell you now.",
-                "My sources say no.",
-                "Yes – definitely.",
-                "Yes.",
-                "Cannot predict now.",
-                "Outlook not so good.",
-                "You may rely on it.",
-                "Signs point to yes.",
-                "Concentrate and ask again.",
-                "Very doubtful.",
-            ]
-            embed = discord.Embed(
-                title="Magic 8 Ball",
-                colour=0x2859B8,
-                description=f"Question: {question}\nAnswer: {random.choice(responses)}",
-            )
-        await ctx.send(embed=embed)
-
     def tenor(self, query):
         token = env_file.get()
         gif_object = requests.get(

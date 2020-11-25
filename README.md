@@ -1,5 +1,5 @@
 [![Discord Bots](https://top.gg/api/widget/status/709321027775365150.svg)](https://top.gg/bot/709321027775365150)
-[![invite bot](https://img.shields.io/static/v1?style=flat&logo=discord&logoColor=FFF&label=&message=invite%20me&color=7289DA)](https://top.gg/bot/709321027775365150)
+[![invite bot](https://img.shields.io/static/v1?style=flat&logo=discord&logoColor=FFF&label=&message=invite%20bot&color=7289DA)](https://top.gg/bot/709321027775365150)
 
 # Doraemon
 **A multipurpose Discord Bot that has the commands commonly used on every server. Helps you do a lot of things right in discord.**
@@ -11,7 +11,6 @@
 
 **__General__**
 
-`-about` - To know about the bot.  
 `-ping` - Check the bot's latency.  
 `-github` - Github Repo.  
 `-stats` - Check the bot's stats.  
@@ -19,7 +18,6 @@
 
 **__Fun__**
 
-`-8ball <your question>` - Play magic 8 Ball and get the answers to all your questions.  
 `-meme` - Get a random meme from reddit.  
 `-gif <query>` - Get a random GIF from tanor on the specified query.  
 
@@ -44,7 +42,7 @@
 **__Utility__**
 
 `-lmgtfy <question>` -  Returns a [lmgtfy.com](https://lmgtfy.com/) link.  
-`-poll <title>|<description>|<option 1>|<option 2>|<option n>` - Create polls on strawpolls right in discord.  
+`-poll <title>|<description>|<option 1>|<option 2>|<option n>` - Create polls on [StrawPoll](https://strawpoll.com/) right in discord.  
 `-reddit <subreddit>|<query>` - Search for posts in the specified subreddit.  
 
 
@@ -64,8 +62,8 @@
      `TENOR_API = <your tenor API>`  
      `APP_ID = <your reddit application id>`  
      `APP_SECRET = <your reddit application secret>`  
-     `STRAWPOLL_KEY = <your strawpoll api key>`
-     `DBL_TOKEN = <Top.gg Token>`
+     `STRAWPOLL_KEY = <your strawpoll api key>`  
+     `DBL_TOKEN = <Top.gg Token>`  
 - You can now run the bot using `python3 doraemon.py`
 
 

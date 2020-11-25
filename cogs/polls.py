@@ -11,18 +11,17 @@ class Poll(commands.Cog, name="Poll"):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(aliases=["sp"])
+    @commands.command(aliases=["sp", "poll"])
     async def strawpoll(self, ctx, *, poll_data: str):
 
         poll_data = poll_data.split("|")
         title = poll_data[0]
-        description = poll_data[1]
-        options = poll_data[2:]
+        options = poll_data[1:]
 
         data = {
             "poll": {
                 "title": title,
-                "description": description,
+                "description": "\u200b",
                 "answers": options,
                 "priv": True,
                 "ma": 0,
