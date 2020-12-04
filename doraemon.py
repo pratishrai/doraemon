@@ -11,7 +11,6 @@ import env_file
 
 
 client = commands.Bot(command_prefix="-")
-analytics = prismapy.Prismalytics("2oZ3tPpluuZ3V0DtSqcEjQ", client, save_server=True)
 client.remove_command("help")
 
 
@@ -34,22 +33,40 @@ async def on_ready():
 async def on_message(message):
     if message.author == client.user:
         return
-    # guild = database.find_guild(message.guild.id)
-    # if guild is None:
-    #     profile = {
-    #         "guild_id": message.guild.id,
-    #         "prefix": "-",
-    #         "welcome_channel": None,
-    #         "welcome_message": "Hey {user.mention} welcome to {guild.name}",
-    #         "welcome_type": "channel",
-    #         "subreddits": ["memes", "dankmemes"],
-    #         "autorole": False,
-    #         "on_join_role": None,
-    #     }
+    guild = database.find_guild(message.guild.id)
+    if guild is None:
+        guild_profile = {
+            "guild_id": message.guild.id,
+            "bot_msg_channel": message.guild.system_channel.id,
+            "welcome_channel": None,
+            "welcome_message": "Hey {user.mention} welcome to {guild.name}",
+            "welcome_type": "channel",
+            "subreddits": ["memes", "dankmemes"],
+            "autorole": False,
+            "on_join_role": None,
+        }
 
-    #     database.add_guild(profile)
-    #     print(f"Profile has been created for {message.guild.name}:{message.guild.id}")
+        database.add_guild(guild_profile)
+        print(
+            f"Profile has been created for guild {message.guild.name}:{message.guild.id}"
+        )
+    member = database.find_member(message.author.id)
+    if member is None:
+        member_profile = {
+            "member_id": message.author.id,
+            "tz": None,
+        }
+
+        database.add_member(member_profile)
+        print(
+            f"Profile has been created for member {message.author}:{message.author.id}"
+        )
     await client.process_commands(message)
+
+
+@client.event
+async def on_guild_remove(guild):
+    database.remove_guild(guild.id)
 
 
 @client.event
@@ -75,11 +92,6 @@ async def on_guild_join(guild):
     await channel.send(embed=embed)
 
 
-# @client.event
-# async def on_guild_remove(guild):
-#     database.remove_guild(guild.id)
-
-
 @client.event
 async def on_member_join(member):
     channel = member.guild.system_channel
@@ -95,7 +107,7 @@ def is_it_me(ctx):
 
 @client.event
 async def on_command_error(ctx, error):
-    print(error)
+    await ctx.send(error)
 
 
 @client.group()
@@ -114,7 +126,7 @@ async def help(ctx):
             )
             embed.add_field(name="**__Fun__**", value="```\nmeme\ngif\njoke\n-```")
             embed.add_field(
-                name="**__Utility__**", value="```\nlmgtfy\npoll\nreddit\n-```"
+                name="**__Utility__**", value="```\nlmgtfy\npoll\nreddit\nimage```"
             )
             embed.add_field(
                 name="**__Reactions__**",
@@ -124,7 +136,10 @@ async def help(ctx):
                 name="**__Moderation__**",
                 value="```\nclear\nkick\nban\nunban\ninfo\nserverinfo\n```",
             )
-            embed.add_field(name="**__Other__**", value="```\n-\n-\n-\n-\n-\n-```")
+            embed.add_field(
+                name="**__Timezones__**",
+                value="```\nselftz\ntime\nconvert\n-\n-\n-```",
+            )
             embed.add_field(
                 name="\u200b",
                 inline=False,
@@ -453,6 +468,86 @@ async def reactions(ctx):
     await ctx.send(embed=embed)
 
 
+@help.command()
+async def image(ctx):
+    async with ctx.channel.typing():
+        embed = discord.Embed(
+            colour=0x2859B8,
+        )
+        embed.add_field(name="Command", value="-image")
+        embed.add_field(name="Alias", value="`-img`")
+        embed.add_field(
+            name="Usage", inline=False, value="Search for Images from Unspalsh"
+        )
+        embed.add_field(
+            name="Example",
+            inline=False,
+            value="`-image <term>`\n`-image doraemon`",
+        )
+    await ctx.send(embed=embed)
+
+
+@help.command()
+async def selftz(ctx):
+    async with ctx.channel.typing():
+        embed = discord.Embed(
+            colour=0x2859B8,
+        )
+        embed.add_field(name="Command", value="-selftimezone")
+        embed.add_field(name="Alias", value="`-selftz` `mytz`")
+        embed.add_field(
+            name="Usage", inline=False, value="Set your own default timezone."
+        )
+        embed.add_field(
+            name="Example",
+            inline=False,
+            value="`-selftz <time zone>`\n`-selftz Asia/Kolkata`",
+        )
+    await ctx.send(embed=embed)
+
+
+@help.command()
+async def time(ctx):
+    async with ctx.channel.typing():
+        embed = discord.Embed(
+            colour=0x2859B8,
+        )
+        embed.add_field(name="Command", value="-time")
+        embed.add_field(name="Alias", value="`-now`")
+        embed.add_field(
+            name="Usage",
+            inline=False,
+            value="Get time for yourself or a member or for a timezone.",
+        )
+        embed.add_field(
+            name="Example",
+            inline=False,
+            value="`-time`\n`-time Asia/Kolkata`\n`-time @xyz`(user is required to have a default tz)",
+        )
+    await ctx.send(embed=embed)
+
+
+@help.command()
+async def convert(ctx):
+    async with ctx.channel.typing():
+        embed = discord.Embed(
+            colour=0x2859B8,
+        )
+        embed.add_field(name="Command", value="-convert")
+        embed.add_field(name="Alias", value="None")
+        embed.add_field(
+            name="Usage",
+            inline=False,
+            value="Convert time from one timezone to another.",
+        )
+        embed.add_field(
+            name="Example",
+            inline=False,
+            value="`-convert <time> <to tz> <from tz>`\n`-convert 2:13 Asia/Kolkata America/Vancouver`",
+        )
+    await ctx.send(embed=embed)
+
+
 @client.command()
 async def ping(ctx):
     async with ctx.channel.typing():
@@ -476,6 +571,12 @@ async def github(ctx):
 
 
 @client.command()
+async def vote(ctx):
+    async with ctx.channel.typing():
+    await ctx.send("Thank You :heart:\nhttps://top.gg/bot/709321027775365150")
+
+
+@client.command()
 async def invite(ctx):
     async with ctx.channel.typing():
         embed = discord.Embed(
@@ -485,9 +586,9 @@ async def invite(ctx):
     await ctx.send(embed=embed)
 
 
-@client.event
-async def on_command(ctx):
-    await analytics.send(ctx)
+# @client.event
+# async def on_command(ctx):
+#     return
 
 
 for filename in os.listdir("./cogs"):

@@ -30,7 +30,7 @@ class Stats(commands.Cog, name="Stats"):
         embed.add_field(name="**__General Info__**", inline=False, value="\u200b")
         embed.add_field(name="Latency", value=f"{self.client.latency*1000:.03f}ms")
         embed.add_field(name="Guild Count", value=f"{len(self.client.guilds):,}")
-        embed.add_field(name="User Count", value=f"{len(self.client.users):,}")
+        # embed.add_field(name="User Count", value=f"{len(self.client.users):,}")
 
         embed.add_field(name="**__Technical Info__**", inline=False, value="\u200b")
         embed.add_field(name="System CPU Usage", value=f"{psutil.cpu_percent():.02f}%")
