@@ -1,7 +1,6 @@
 import discord
 import os
 import asyncio
-import prismapy
 import random
 from discord.ext import commands
 from discord.utils import get
@@ -23,7 +22,9 @@ async def load(ctx, extension):
 async def on_ready():
     await client.change_presence(
         status=discord.Status.online,
-        activity=discord.Activity(name="You using my Gadgets [-help]", type=3),
+        activity=discord.Activity(
+            name="you completing your homework :D [-help]", type=3
+        ),
     )
     print(f'Bot is running as "{client.user}"')
     print("=========================================")
@@ -37,13 +38,14 @@ async def on_message(message):
     if guild is None:
         guild_profile = {
             "guild_id": message.guild.id,
-            "bot_msg_channel": message.guild.system_channel.id,
+            "bot_msg_channel": None,
             "welcome_channel": None,
             "welcome_message": "Hey {user.mention} welcome to {guild.name}",
             "welcome_type": "channel",
             "subreddits": ["memes", "dankmemes"],
             "autorole": False,
             "on_join_role": None,
+            "greeting_type": "text",
         }
 
         database.add_guild(guild_profile)
@@ -92,22 +94,13 @@ async def on_guild_join(guild):
     await channel.send(embed=embed)
 
 
-@client.event
-async def on_member_join(member):
-    channel = member.guild.system_channel
-    if member.guild.id == 699037304836063292:
-        print(f"Hey {member.mention}, Welcome to {member.guild}")
-    else:
-        await channel.send(f"Hey {member.mention}, Welcome to {member.guild}")
-
-
 def is_it_me(ctx):
     return ctx.author.id == 690922103712776202
 
 
-@client.event
-async def on_command_error(ctx, error):
-    await ctx.send(error)
+# @client.event
+# async def on_command_error(ctx, error):
+#    print(error)
 
 
 @client.group()
@@ -122,23 +115,26 @@ async def help(ctx):
     """,
             )
             embed.add_field(
-                name="**__General__**", value="```\nping\ngithub\nstats\ninvite```"
-            )
-            embed.add_field(name="**__Fun__**", value="```\nmeme\ngif\njoke\n-```")
-            embed.add_field(
-                name="**__Utility__**", value="```\nlmgtfy\npoll\nreddit\nimage```"
-            )
-            embed.add_field(
-                name="**__Reactions__**",
-                value="```\nlaugh\nshrug\nhug\ncry\npat\n-```",
+                name="**__General__**",
+                value="```\nping\ngithub\nstats\ninvite\nsettings\nsuggest```",
             )
             embed.add_field(
                 name="**__Moderation__**",
                 value="```\nclear\nkick\nban\nunban\ninfo\nserverinfo\n```",
             )
+
+            embed.add_field(
+                name="**__Reactions__**",
+                value="```\nlaugh\nshrug\nhug\ncry\npat\n-```",
+            )
+            embed.add_field(
+                name="**__Utility__**", value="```\nlmgtfy\npoll\nreddit\nimage```"
+            )
+
+            embed.add_field(name="**__Fun__**", value="```\nmeme\ngif\njoke\n-```")
             embed.add_field(
                 name="**__Timezones__**",
-                value="```\nselftz\ntime\nconvert\n-\n-\n-```",
+                value="```\nselftz\ntime\nconvert\n-```",
             )
             embed.add_field(
                 name="\u200b",
@@ -548,6 +544,36 @@ async def convert(ctx):
     await ctx.send(embed=embed)
 
 
+@help.command()
+async def settings(ctx):
+    async with ctx.channel.typing():
+        embed = discord.Embed(
+            colour=0x2859B8,
+        )
+        embed.add_field(name="Command", value="-settings")
+        embed.add_field(name="Alias", value="`-setting` `set`")
+        embed.add_field(
+            name="Available Settings:",
+            inline=False,
+            value="""
+            `systemchannel` - Set a default channel for the bot to send updates, etc. [optional but recomended]
+            `welcometype` - Set the welcome type, Ex- `channel`, `dm`, `none` [default = `channel`]
+            `welcomechannel` - Set the welcome channel for the bot to send welcome/goodbye messages. [required if `welcometype` is set to `channel`]
+            `welcomemsg` - Set a greeting message to be displayed on the welcome image.
+            `autorole` - Assign roles to the new members as they join. [can be `true` or `false`]
+            `onjoinrole` - Choose which role to assign to new members. [required if `autorole` is set to `True`]
+            `greetingtype` - Choose if the new member should be greeted with a text or an image. [default = `text`]
+            
+            **You can use `-settings` command to see their aliases**""",
+        )
+        embed.add_field(
+            name="\u200b",
+            inline=False,
+            value="`-settings <settings_name> <value>`\n`-settings welcomechannel #welcome`",
+        )
+    await ctx.send(embed=embed)
+
+
 @client.command()
 async def ping(ctx):
     async with ctx.channel.typing():
@@ -573,7 +599,26 @@ async def github(ctx):
 @client.command()
 async def vote(ctx):
     async with ctx.channel.typing():
-    await ctx.send("Thank You :heart:\nhttps://top.gg/bot/709321027775365150")
+        await ctx.send("Thank You :heart:\nhttps://top.gg/bot/709321027775365150/vote")
+
+
+@client.command(aliases=["suggestion"])
+async def suggest(ctx, *, suggestion: str = None):
+    if suggestion is not None:
+        async with ctx.channel.typing():
+            channel = client.get_channel(id=790664250137640981)
+            embed = discord.Embed(
+                colour=0x2859B8,
+                description=suggestion,
+            )
+            embed.set_author(
+                name=ctx.author.name,
+                url=discord.Embed.Empty,
+                icon_url=ctx.author.avatar_url,
+            )
+        await channel.send(embed=embed)
+        return await ctx.send("Thank You!")
+    return await ctx.send("`-suggest <suggestion>`")
 
 
 @client.command()
@@ -584,11 +629,6 @@ async def invite(ctx):
             description="Invite me to your server using [this link](https://discord.com/api/oauth2/authorize?client_id=709321027775365150&permissions=8&scope=bot)",
         )
     await ctx.send(embed=embed)
-
-
-# @client.event
-# async def on_command(ctx):
-#     return
 
 
 for filename in os.listdir("./cogs"):

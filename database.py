@@ -32,7 +32,7 @@ def remove_guild(guild):
 
 
 def find_guild(guild):
-    guild_profiles = guild_profiles.find_one({"guild_id": guild})
+    guild = guild_profiles.find_one({"guild_id": guild})
     return guild
 
 
@@ -42,7 +42,7 @@ def find_member(member):
 
 
 def set_tz(member, tz):
-    member_profiles.update_one({"member_id": member}, {'$set': {"tz": tz}})
+    member_profiles.update_one({"member_id": member}, {"$set": {"tz": tz}})
 
 
 def get_tz(member):
@@ -51,7 +51,31 @@ def get_tz(member):
     return tz
 
 
-# print(members())
-# print(guilds())
+"""
+guild_profile = {
+            "guild_id": message.guild.id,
+            "bot_msg_channel": message.guild.system_channel.id,
+            "welcome_channel": None,
+            "welcome_message": "Hey {user.mention} welcome to {guild.name}",
+            "welcome_type": "channel",
+            "subreddits": ["memes", "dankmemes"],
+            "autorole": False,
+            "on_join_role": None,
+            "greeting_type": "text"
+        }
+"""
 
-# profiles.update_many({}, {"$set": {"something": "idk"}}, upsert=False, array_filters=None)
+
+def get_data(guild, data=None):
+    if data is not None:
+        guild = guild_profiles.find_one({"guild_id": guild})
+        data = guild[f"{data}"]
+        return data
+
+
+def set_data(guild, data=None, value=None):
+    if data and value is not None:
+        guild_profiles.update_one({"guild_id": guild}, {"$set": {f"{data}": value}})
+
+
+# guild_profiles.update_many({}, {"$set": {"greeting_type": "text"}}, upsert=False, array_filters=None)

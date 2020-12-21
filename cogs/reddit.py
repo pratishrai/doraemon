@@ -22,7 +22,6 @@ class Fun(commands.Cog, name="Fun"):
     def __init__(self, client):
         self.client = client
 
-
     @commands.command(aliases=["m"])
     async def meme(self, ctx):
         async with ctx.channel.typing():
@@ -33,7 +32,7 @@ class Fun(commands.Cog, name="Fun"):
                 if not submission.stickied:
                     memes.append(submission)
 
-            choice = random.choice(range(100))
+            choice = random.choice(range(len(memes)))
             title = memes[choice].title
             url = memes[choice].url
             permalink = memes[choice].permalink
@@ -57,11 +56,14 @@ class Fun(commands.Cog, name="Fun"):
         embed = discord.Embed(
             colour=0x2859B8,
             title=f"**https://www.reddit.com/r/{subreddit}**",
-            )
+        )
         for i in posts:
-            embed.add_field(name=f"{i.title}", inline=False, value=f"[Read the post here](https://www.reddit.com{i.permalink})\n --------------------------------------")
+            embed.add_field(
+                name=f"{i.title}",
+                inline=False,
+                value=f"[Read the post here](https://www.reddit.com{i.permalink})\n --------------------------------------",
+            )
         await ctx.send(embed=embed)
-
 
 
 def setup(client):
