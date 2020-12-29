@@ -1,16 +1,29 @@
 import discord
+import logging
 import os
 import asyncio
 import random
 from discord.ext import commands
+from discord import Activity, ActivityType, AllowedMentions
+from discord.ext.commands import when_mentioned_or
 from discord.utils import get
 from discord.utils import find
 import database
 import env_file
 
+logging.basicConfig(level=logging.INFO)
 
-client = commands.Bot(command_prefix="-")
-client.remove_command("help")
+intents = discord.Intents.default()
+intents.members = True
+intents.typing = False
+
+
+client = commands.Bot(
+    command_prefix=when_mentioned_or("-"),
+    help_command=None,
+    allowed_mentions=AllowedMentions.none(),
+    intents=intents,
+)
 
 
 @client.command()

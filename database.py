@@ -54,7 +54,7 @@ def get_tz(member):
 """
 guild_profile = {
             "guild_id": message.guild.id,
-            "bot_msg_channel": message.guild.system_channel.id,
+            "bot_msg_channel": None,
             "welcome_channel": None,
             "welcome_message": "Hey {user.mention} welcome to {guild.name}",
             "welcome_type": "channel",
@@ -78,4 +78,9 @@ def set_data(guild, data=None, value=None):
         guild_profiles.update_one({"guild_id": guild}, {"$set": {f"{data}": value}})
 
 
-# guild_profiles.update_many({}, {"$set": {"greeting_type": "text"}}, upsert=False, array_filters=None)
+# guild_profiles.update_many(
+#     {},
+#     {"$set": {"welcome_message": "Hey {user.mention} welcome to {guild.name}"}},
+#     upsert=False,
+#     array_filters=None,
+# )

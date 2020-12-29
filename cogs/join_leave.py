@@ -59,16 +59,17 @@ class JoinLeave(commands.Cog, name="Poll"):
                     "{0}#{1} has joined".format(
                         member.name, member.discriminator
                     ).capitalize(),
-                    welcome_msg,
+                    f"Welcome to {member.guild.name}",
                 )
             if welcome_type == "channel":
                 channel_id = database.get_data(
                     guild=member.guild.id, data="welcome_channel"
                 )
-                channel = self.client.get_channel(channel_id)
-                if greeting_type == "image":
-                    return await channel.send(file=img)
-                return await channel.send(welcome_msg)
+                if channel_id is not None:
+                    channel = self.client.get_channel(channel_id)
+                    if greeting_type == "image":
+                        return await channel.send(file=img)
+                    return await channel.send(welcome_msg)
             if welcome_type == "dm":
                 if greeting_type == "image":
                     return await member.send(file=img)
