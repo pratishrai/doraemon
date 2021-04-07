@@ -9,8 +9,7 @@ class Moderation(commands.Cog, name="Moderation"):
     @commands.command(aliases=["c"])
     @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, amount=1):
-        await ctx.channel.purge(limit=amount, before=ctx.message)
-        await ctx.message.delete()
+        await ctx.channel.purge(limit=amount, before=ctx.message + 1)
 
     @commands.command(aliases=["yeet"])
     @commands.has_permissions(kick_members=True)
