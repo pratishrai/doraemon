@@ -1,8 +1,8 @@
-discord.py==1.3.4
+discord.py==1.7.3
 psutil==5.7.0
 requests==2.23.0
 praw==7.1.0
-env-file==2020.7.1
+env-file
 pymongo==3.11.0
 dnspython==2.0.0
 dblpy==0.4.0
