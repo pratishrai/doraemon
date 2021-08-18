@@ -1,15 +1,21 @@
 import discord
 import logging
-import os
-import asyncio
-import random
 from discord.ext import commands
-from discord import Activity, ActivityType, AllowedMentions
+from discord import Activity, AllowedMentions
 from discord.ext.commands import when_mentioned_or
-from discord.utils import get
-from discord.utils import find
 import database
 import env_file
+
+from cogs.dbl import TopGG
+from cogs.gifs import Others
+from cogs.images import Images
+from cogs.join_leave import JoinLeave
+from cogs.moderation import Moderation
+from cogs.polls import Poll
+from cogs.reddit import Fun
+from cogs.settings import Settings
+from cogs.stats import Stats
+from cogs.timezones import TimezoneCommands
 
 logging.basicConfig(level=logging.INFO)
 
@@ -17,6 +23,8 @@ intents = discord.Intents.default()
 intents.members = True
 intents.typing = False
 
+token = env_file.get()
+environ = token["ENVIRON"]
 
 client = commands.Bot(
     command_prefix=when_mentioned_or("-"),
@@ -26,18 +34,11 @@ client = commands.Bot(
 )
 
 
-@client.command()
-async def load(ctx, extension):
-    client.load_extension(f"cogs.{extension}")
-
-
 @client.event
 async def on_ready():
     await client.change_presence(
         status=discord.Status.online,
-        activity=discord.Activity(
-            name="you completing your homework :D [-help]", type=3
-        ),
+        activity=Activity(name="you completing your homework :D [-help]", type=3),
     )
     print(f'Bot is running as "{client.user}"')
     print("=========================================")
@@ -644,10 +645,19 @@ async def invite(ctx):
     await ctx.send(embed=embed)
 
 
-for filename in os.listdir("./cogs"):
-    if filename.endswith(".py"):
-        client.load_extension(f"cogs.{filename[:-3]}")
+client.add_cog(Others(client))
+client.add_cog(Images(client))
+client.add_cog(JoinLeave(client))
+client.add_cog(Moderation(client))
+client.add_cog(Poll(client))
+client.add_cog(Fun(client))
+client.add_cog(Settings(client))
+client.add_cog(Stats(client))
+client.add_cog(TimezoneCommands(client))
 
-token = env_file.get()
 
-client.run(token["BOT_TOKEN"])
+if environ == "PROD":
+    client.add_cog(TopGG(client))
+    client.run(token["BOT_TOKEN"])
+elif environ == "DEV":
+    client.run(token["DEV_BOT_TOKEN"])
