@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 import requests
-import json
 import os
 import random
 from dotenv import load_dotenv

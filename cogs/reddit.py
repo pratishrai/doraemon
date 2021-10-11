@@ -1,11 +1,8 @@
 import discord
 from discord.ext import commands
-import requests
 import os
-import json
 import praw
 import random
-import base64
 from discord.utils import get
 from dotenv import load_dotenv
 
