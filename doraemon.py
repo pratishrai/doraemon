@@ -1,10 +1,11 @@
 import discord
 import logging
+import os
 from discord.ext import commands
 from discord import Activity, AllowedMentions
 from discord.ext.commands import when_mentioned_or
 import database
-import env_file
+from dotenv import load_dotenv
 
 from cogs.dbl import TopGG
 from cogs.gifs import Others
@@ -18,13 +19,13 @@ from cogs.stats import Stats
 from cogs.timezones import TimezoneCommands
 
 logging.basicConfig(level=logging.INFO)
+load_dotenv()
 
 intents = discord.Intents.default()
 intents.members = True
-intents.typing = False
+intents.typing = True
 
-token = env_file.get()
-environ = token["ENVIRON"]
+environ = os.getenv("ENVIRON")
 
 client = commands.Bot(
     command_prefix=when_mentioned_or("-"),
@@ -658,6 +659,6 @@ client.add_cog(TimezoneCommands(client))
 
 if environ == "PROD":
     client.add_cog(TopGG(client))
-    client.run(token["BOT_TOKEN"])
+    client.run(os.getenv("BOT_TOKEN"))
 elif environ == "DEV":
-    client.run(token["DEV_BOT_TOKEN"])
+    client.run(os.getenv("DEV_BOT_TOKEN"))
