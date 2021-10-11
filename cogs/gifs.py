@@ -2,8 +2,11 @@ import discord
 from discord.ext import commands
 import requests
 import json
+import os
 import random
-import env_file
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class Others(commands.Cog, name="Others"):
@@ -24,9 +27,8 @@ class Others(commands.Cog, name="Others"):
         await ctx.send(embed=embed)
 
     def tenor(self, query):
-        token = env_file.get()
         gif_object = requests.get(
-            f"https://api.tenor.com/v1/search?q={query}&key={token['TENOR_KEY']}&limit=50"
+            f"https://api.tenor.com/v1/search?q={query}&key={os.getenv('TENOR_KEY')}&limit=50"
         ).json()
         choice = random.choice(range(50))
         url = gif_object["results"][choice]["media"][0]["gif"]["url"]

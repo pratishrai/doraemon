@@ -1,19 +1,20 @@
 import discord
 from discord.ext import commands
 import requests
+import os
 import json
 import praw
 import random
 import base64
 from discord.utils import get
-import env_file
+from dotenv import load_dotenv
 
-token = env_file.get()
+load_dotenv()
 
 
 reddit = praw.Reddit(
-    client_id=f"{token['APP_ID']}",
-    client_secret=f"{token['APP_SECRET']}",
+    client_id=f"{os.getenv('APP_ID')}",
+    client_secret=f"{os.getenv('APP_SECRET')}",
     user_agent="doraemon by /u/pr0grammingwizard",
 )
 

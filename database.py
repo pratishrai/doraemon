@@ -1,9 +1,10 @@
 import pymongo
+import os
 from pymongo import MongoClient
-import env_file
+from dotenv import load_dotenv
 
-token = env_file.get()
-client = MongoClient(token["URI"])
+load_dotenv()
+client = MongoClient(os.getenv("URI"))
 db = client.doraemonbot
 guild_profiles = db.guild_profiles
 member_profiles = db.member_profiles

@@ -2,9 +2,10 @@ import discord
 from discord.ext import commands
 import requests
 import json
-import env_file
+import os
+from dotenv import load_dotenv
 
-token = env_file.get()
+load_dotenv()
 
 
 class Poll(commands.Cog, name="Poll"):
@@ -39,7 +40,7 @@ class Poll(commands.Cog, name="Poll"):
         poll = requests.post(
             "https://strawpoll.com/api/poll",
             json=data,
-            headers={"API-KEY": token["STRAWPOLL_KEY"]},
+            headers={"API-KEY": os.getenv("STRAWPOLL_KEY")},
         ).json()
 
         await ctx.send(f"https://strawpoll.com/{poll['content_id']}")
