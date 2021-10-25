@@ -27,7 +27,8 @@ intents.typing = True
 
 environ = os.getenv("ENVIRON")
 
-client = commands.Bot(
+client = commands.AutoShardedBot(
+    shard_count=10,
     command_prefix=when_mentioned_or("-"),
     help_command=None,
     allowed_mentions=AllowedMentions.none(),
