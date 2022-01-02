@@ -51,11 +51,6 @@
 `-time <timezone/member>` - Get the current time for a timezone or a member.  
 `-convert <time> <to tz> <from tz>` - Convert time in other timezones.  
 
-# TO-DO
-
-- Web Dashboard
-- More commands
-
 
 # Setup
 
