@@ -19,7 +19,7 @@
 **Fun**
 
 `-meme` - Get a random meme from reddit.  
-`-gif <query>` - Get a random GIF from tanor on the specified query.  
+`-gif <query>` - Get a random GIF from tenor on the specified query.  
 
 **Reactions**
 
@@ -33,9 +33,8 @@
 
 `-clear <amount of messages>` - Clears the specified no. of messages.(default=1)  
 `-kick <member> <reason>` - Kicks a member out of the server.  
-`-ban <member> <reason>` - Bans a member in the server.  
-`-unban <member>` - Unbans the member in the server.  
-`-count` - Count of messages in a channel.  
+`-ban <member> <reason>` - Bans a member from the server.  
+`-unban <member>` - Unbans the member from the server.  
 `-info` - General Info of a member.  
 `-serverinfo` - General Info of the Server  
 
@@ -48,9 +47,9 @@
 
 **Timezones**
 
-`-selftz <timezone>` - Set you own defauld Timezone  
-`-time <timezone/member>` - Get the current for a timezone or a member.  
-`-convert <time> <to tz> <from tz>` - Convert time in verious timezones.  
+`-selftz <timezone>` - Set you own default Timezone  
+`-time <timezone/member>` - Get the current time for a timezone or a member.  
+`-convert <time> <to tz> <from tz>` - Convert time in other timezones.  
 
 # TO-DO
 
@@ -71,6 +70,7 @@
      `STRAWPOLL_KEY = <your strawpoll api key>`  
      `DBL_TOKEN = <Top.gg Token>`  
      `ACCESS_KEY = <Unsplash Access Key>`  
+     `ENVIRON = DEV`
 - You can now run the bot using `python3 doraemon.py`
 
 
