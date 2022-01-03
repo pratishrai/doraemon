@@ -138,15 +138,16 @@ While setting welcome message you can use variables like;
             return await ctx.send(f"Currently on join role is set to {role.mention}")
         await ctx.send("-settings onjoinrole <role>")
 
-
     @setting.command(aliases=["greet", "greeting", "greetingtype"])
     @commands.has_permissions(administrator=True)
-    async def greeting_type(self, ctx, _type: str=None):
+    async def greeting_type(self, ctx, _type: str = None):
         if _type is not None:
             _type = _type.lower()
             if _type == "text" or _type == "image":
                 async with ctx.channel.typing():
-                    database.set_data(guild=ctx.guild.id, data="greeting_type", value=_type)
+                    database.set_data(
+                        guild=ctx.guild.id, data="greeting_type", value=_type
+                    )
                 return await ctx.send(f"Greeting has been set to `{_type}`.")
             return await ctx.send(
                 "Greeting can only be set to either `text` or `image`"

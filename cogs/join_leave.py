@@ -1,13 +1,9 @@
 import discord
 from discord.ext import commands
-import env_file
 import database
 from PIL import Image, ImageDraw, ImageFont
 import io
 import aiohttp
-
-
-token = env_file.get()
 
 
 class JoinLeave(commands.Cog, name="Poll"):
